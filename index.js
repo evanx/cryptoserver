@@ -1,4 +1,5 @@
 
+var fs = require('fs');
 var async = require('async');
 var S = require('string');
 var _ = require('underscore');
@@ -11,6 +12,10 @@ var log = bunyan.createLogger({name: "keyserver"});
 var redis = require('redis');
 
 var redisClient = redis.createClient();
+
+var data = {
+   passwords: {}
+};
 
 redisClient.on('error', function (err) {
    console.error('error', err);
@@ -27,7 +32,24 @@ function handleGet(req, res) {
 
 function handleGetGenKey(req, res) {
    try {
-      throw new Error('unimplemented: ' + req.params.name);
+      data.keyName = req.parms.name;
+      data.custodianCount = req.params.count;
+      data.passwords = {};
+   } catch (error) {
+      console.error('error', error);
+      res.status(500).send(error.message + '\n');
+   }
+}
+
+function handleGetHelp(req, res) {
+   try {
+      fs.readFile('README.md', function (err, data) {
+         if (data) {
+            res.send(data);
+         } else {
+            res.send('no help');
+         }
+      });
    } catch (error) {
       console.error('error', error);
       res.status(500).send(error.message + '\n');
@@ -43,18 +65,17 @@ function handlePostPassword(req, res) {
    }
 }
 
-function start(config) {
-   exports.config = config;
-   console.log('config', config);
-   app.get(config.location, handleGet);
-   app.get(config.location + 'genkey/:count/:name', handleGetGenKey);
-   app.post(config.location + 'password/:user/:name', handlePostPassword);
-   app.listen(config.port);
+function start(port) {
+   app.get('/', handleGetHelp);
+   app.get('/help', handleGetHelp);
+   app.get('/genkey/:name/:count', handleGetGenKey);
+   app.post('/password/:user', handlePostPassword);
+   app.listen(port);
 }
 
-var config = {
-   port: 8888,
-   location: "/app/"
-};
-
-start(config);
+if (process.env.KEYSERVER_PORT) {
+   start(process.env.KEYSERVER_PORT);
+} else {
+   console.error("KEYSERVER_PORT is not set");
+   process.exit(1);
+}
