@@ -29,6 +29,7 @@
     "body-parser": "~1.11.0",
     "express-bunyan-logger": "~1.1.1",
     "openssl-wrapper": "~0.2.1",
-    "gpg": "~0.3.4"
+    "gpg": "~0.3.4",
+    "performance-now": "~0.2.0"
   }
 }

@@ -1,20 +1,24 @@
 
 var crypto = require('crypto');
 var async = require('async');
+var now = require('performance-now');
 
-var data = {
+var options = {
    saltLength: 32,
    ivLength: 16,
-   iterationCount: 10000,
+   iterationCount: 100000,
    algorithm: 'aes-256-ctr',
-   keyLength: 32,
+   keyLength: 32
+};
+
+var data = {
    password: 'password',
    clearText: '1234567812345678'
 };
 
 async.series([
    function (callback) {
-      crypto.randomBytes(data.saltLength, function (err, buffer) {
+      crypto.randomBytes(options.saltLength, function (err, buffer) {
          if (!err) {
             data.salt = buffer;
             console.log('salt', data.salt.length);
@@ -23,7 +27,7 @@ async.series([
       })
    },
    function (callback) {
-      crypto.randomBytes(data.ivLength, function (err, buffer) {
+      crypto.randomBytes(options.ivLength, function (err, buffer) {
          if (!err) {
             data.iv = buffer;
             console.log('iv', data.iv.length);
@@ -32,20 +36,22 @@ async.series([
       });
    },
    function (callback) {
-      crypto.pbkdf2(data.password, data.salt, data.iterationCount, data.keyLength, function (err, key) {
+      var start = now();
+      crypto.pbkdf2(data.password, data.salt, options.iterationCount, options.keyLength, function (err, key) {
          if (!err) {
             data.key = key;
-            console.log('key', data.key.length);
+            var duration = Math.round(now() - start);
+            console.log('key', duration, data.key.length);
          }
          callback(err);
       });
    },
    function (callback) {
-      data.cipher = crypto.createCipheriv(data.algorithm, data.key, data.iv);
+      data.cipher = crypto.createCipheriv(options.algorithm, data.key, data.iv);
       callback();
    },
    function (callback) {
-      data.decipher = crypto.createDecipheriv(data.algorithm, data.key, data.iv);
+      data.decipher = crypto.createDecipheriv(options.algorithm, data.key, data.iv);
       callback();
    },
    function (callback) {
@@ -60,7 +66,7 @@ async.series([
       data.clearText += data.decipher.final('utf8');
       console.log('decrypted', data.clearText);
       callback();
-   }  
+   }
 ], function (err, results) {
    console.log('series', err);
    if (err) {
