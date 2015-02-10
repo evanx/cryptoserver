@@ -18,33 +18,47 @@ var data = {
    passwords: {}
 };
 
+function genKey() {
+   var users = Object.keys(data.passwords);
+   console.info('genKey', data.keyName, users);
+}
+
 redisClient.on('error', function (err) {
    console.error('error', err);
 });
+
+function handleError(res, error) {
+   console.error('error', error, error.stack);
+   res.status(500).send(error);
+}
 
 function handleGet(req, res) {
    try {
       throw new Error('unimplemented: ' + req.url);
    } catch (error) {
-      console.error('error', error);
-      res.status(500).send(error.message);
+      handleError(res, error);
    }
 }
 
 function handleGetGenKey(req, res) {
    try {
-      data.keyName = req.parms.name;
-      data.custodianCount = req.params.count;
+      data.keyName = req.params.name;
+      data.custodianCount = parseInt(req.params.count);
       data.passwords = {};
+      var reply = {
+         message: 'ok',
+         keyName: data.keyName,
+         custodianCount: data.custodianCount
+      };
+      console.info('reply', reply);
+      res.send(reply);
    } catch (error) {
-      console.error('error', error);
-      res.status(500).send(error.message + '\n');
+      handleError(res, error);
    }
 }
 
 function handleGetHelp(req, res) {
    try {
-      res.set('Content-Type', 'text/plain');
       fs.readFile('README.md', function (err, data) {
          if (data) {
             res.send(data);
@@ -53,17 +67,26 @@ function handleGetHelp(req, res) {
          }
       });
    } catch (error) {
-      console.error('error', error);
-      res.status(500).send(error.message + '\n');
+      handleError(res, error);
    }
 }
 
 function handlePostPassword(req, res) {
    try {
-      throw new Error(['unimplemented', req.params.name, req.body]);
+      data.passwords[req.params.user] = req.body;
+      var reply = {
+         message: 'ok',
+         user: req.params.user,
+         custodianCount: data.custodianCount,
+         passwordCount: Object.keys(data.passwords).length
+      };
+      console.info('reply', reply);
+      res.send(reply);
+      if (data.custodianCount === Object.keys(data.passwords).length) {
+         genKey();
+      }
    } catch (error) {
-      console.error('error', error);
-      res.status(500).send(error.message + '\n');
+      handleError(res, error);
    }
 }
 
@@ -77,6 +100,7 @@ function start(config) {
       key: fs.readFileSync(config.key),
       cert: fs.readFileSync(config.cert)
    };
+   app.use(require('express-bunyan-logger')());
    https.createServer(options, app).listen(8443);
 }
 
