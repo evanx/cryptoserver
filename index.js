@@ -9,6 +9,8 @@ var https = require('https');
 var bodyParser = require('body-parser')
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: "keyserver"});
+var crypto = require('crypto');
+var algorithm = 'aes-256-ctr';
 
 var redis = require('redis');
 
@@ -20,7 +22,15 @@ var data = {
 
 function genKey() {
    var users = Object.keys(data.passwords);
+   users.sort();
    console.info('genKey', data.keyName, users);
+   for (var i = 0; i < users.length; i++) {
+      for (var j = 0; j < users.length; j++) {
+         if (j > i) {
+            console.info('genKey', data.keyName, users[i], users[j]);            
+         }
+      }      
+   }
 }
 
 redisClient.on('error', function (err) {
