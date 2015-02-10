@@ -5,6 +5,7 @@ var S = require('string');
 var _ = require('underscore');
 var express = require('express');
 var app = express();
+var https = require('https');
 var bodyParser = require('body-parser')
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: "keyserver"});
@@ -43,6 +44,7 @@ function handleGetGenKey(req, res) {
 
 function handleGetHelp(req, res) {
    try {
+      res.set('Content-Type', 'text/plain');
       fs.readFile('README.md', function (err, data) {
          if (data) {
             res.send(data);
@@ -65,17 +67,18 @@ function handlePostPassword(req, res) {
    }
 }
 
-function start(port) {
+function start(config) {
+   console.info('config', config);
    app.get('/', handleGetHelp);
    app.get('/help', handleGetHelp);
    app.get('/genkey/:name/:count', handleGetGenKey);
    app.post('/password/:user', handlePostPassword);
-   app.listen(port);
+   var options = {
+      key: fs.readFileSync(config.key),
+      cert: fs.readFileSync(config.cert)
+   };
+   https.createServer(options, app).listen(8443);
 }
 
-if (process.env.KEYSERVER_PORT) {
-   start(process.env.KEYSERVER_PORT);
-} else {
-   console.error("KEYSERVER_PORT is not set");
-   process.exit(1);
-}
+start(require('/var/mobi/config/keyserver.json'));
+
