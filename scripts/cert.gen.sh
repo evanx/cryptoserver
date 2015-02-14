@@ -1,8 +1,6 @@
 
 set -u 
 
-cd
-
 mkdir -p tmp/certs
 
 cd tmp/certs 
@@ -17,10 +15,6 @@ c1removeprot() {
   mv -f $cn.key.unprot $cn.key
 }
 
-c1casign() {
-  openssl x509 -req -days 365 -in $cn.csr -out $cn.cert -signkey ca.key -passin "$pass"
-}
-
 c1genrsa() {
   cn="$1"
   subj="/CN=$cn/O=ngena.com" 
@@ -29,6 +23,7 @@ c1genrsa() {
   c1removeprot $cn
   openssl req -new -key $cn.key -passin "$pass" -subj "$subj" -out $cn.csr 
   openssl x509 -req -days 365 -in $cn.csr -out $cn.cert -signkey $cn.key -passin "$pass"
+  openssl x509 -req -days 365 -in $cn.csr -out $cn.cert -passin "$pass" -CA ca.cert -CAkey ca.key -CAcreateserial -days 365 # -signkey ca.key
   rm $cn.csr
   openssl x509 -text -in $cn.cert | grep 'Issuer:\|Subject:'
   ls -l $cn.*
@@ -37,11 +32,14 @@ c1genrsa() {
 c0rsync() {
   dest=/var/mobi/certs/keyserver
   echo; echo "## rsync server key and cert to $dest"
-  ls -l server.*
+  ls -l ca.* server.* 
   mkdir -p $dest
-  rsync -a server.* $dest
+  rsync -a ca.* server.* $dest
   echo; echo "## $dest"
   ls -l $dest
+  echo
+  pwd
+  ls -l 
 }
 
 c0gen() {
