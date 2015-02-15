@@ -41,12 +41,12 @@ keyName=testdek
 
 c0postsecret2() {
   c3post secret/$keyName evan eee
-  c3post secret/$keyName henry eee
+  c3post secret/$keyName henry hhh
 }
 
 c0postsecret3() {
   c3post secret/$keyName evan eee
-  c3post secret/$keyName henry eee
+  c3post secret/$keyName henry hhh
   c3post secret/$keyName brent bbb
 }
 
