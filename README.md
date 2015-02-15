@@ -18,6 +18,26 @@ Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyser
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just display this `README.md` markdown file in HTML. Incidently connection without a cert client, is redirect to `/help.`
 
+```shell
+$ redis-cli keys dek:*
+1) "dek:testdek"
+
+$ redis-cli hkeys dek:testdek
+1) "secret:brent:evan"
+2) "secret:brent:henry"
+3) "secret:evan:henry"
+4) "salt"
+5) "iv"
+
+$ redis-cli redis hget dek:testdek secret:brent:evan
+"50440e8a39f8e5"
+
+$ redis-cli redis hget dek:testdek secret:brent:henry
+"dbbc09a814004e"
+
+$ redis-cli redis hget dek:testdek secret:evan:henry
+"f63a11bead777c"
+```
 <hr>
 Home: https://github.com/evanx/vellum/wiki
 
