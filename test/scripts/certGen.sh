@@ -23,7 +23,8 @@ c1genrsa() {
   c1removeprot $cn
   openssl req -new -key $cn.key -passin "$pass" -subj "$subj" -out $cn.csr 
   openssl x509 -req -days 365 -in $cn.csr -out $cn.cert -signkey $cn.key -passin "$pass"
-  openssl x509 -req -days 365 -in $cn.csr -out $cn.cert -passin "$pass" -CA ca.cert -CAkey ca.key -CAcreateserial -days 365 # -signkey ca.key
+  openssl x509 -req -days 365 -in $cn.csr -out $cn.cert -passin "$pass" \
+    -CA ca.cert -CAkey ca.key -CAcreateserial -days 365 # -signkey ca.key
   rm $cn.csr
   openssl x509 -text -in $cn.cert | grep 'Issuer:\|Subject:'
   ls -l $cn.*
