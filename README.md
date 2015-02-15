@@ -17,7 +17,7 @@ Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyser
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any connection without a cert client, is redirected to `/help.`
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used as the key-encrypting key (KEK). The split-knowledge secret is hashed using PBKDF2 with a large number of iterations, to combat brute-force attacks. The resulting hash is our KEK, and is used to encrypt the DEK using AES with a 256bit key length. 
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used to derive the key-encrypting key (KEK) using PBKDF2. A large number of iterations is used to make the hashing operation take as long as is tolerable, to combat brute-force attacks. The resulting hash is a KEK, which is used to encrypt the DEK (using AES with a 256bit key length). 
 
 ```shell
 $ redis-cli keys dek:*
@@ -40,7 +40,7 @@ $ redis-cli redis hget dek:testdek dek:evan:henry
 "a45872a12d9783b00f073ae68a68dc04795b7a"
 ```
 
-Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text. The data for the hash key `dek:brent:evan` et al is the encrypted DEK, which is "known to no single person" as per PCI DSS requirements. It is encrypted for each split-knowledge secret, which is comprised of two custodians' secrets, hashed with PBKDF2, and encrypted using AES with the resulting KEK. It is important for the PBKDF2 to use a large number of iterations, so that it takes as long as is tolerable. (This combats brute-force attacks.)
+Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text. The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
