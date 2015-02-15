@@ -17,7 +17,20 @@ Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyser
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any connection without a cert client, is redirected to `/help.`
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used to derive the key-encrypting key (KEK) using PBKDF2. A large number of iterations is used to make the hashing operation take as long as is tolerable, to combat brute-force attacks. The resulting hash is a KEK, which is used to encrypt the DEK (using AES with a 256bit key length). 
+
+We send the following client-authenticated HTTPS requests.
+
+```shell
+GET genkey/testdek/3 as evan
+POST secret/testdek as evan with data 'eeeeeeeeeeee'
+POST secret/testdek as henry with data 'hhhhhhhhhhhh'
+POST secret/testdek as brent with data 'bbbbbbbbbbbb'
+GET key/testdek as evan
+GET load/testdek as evan
+
+```
+
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used to derive the key-encrypting key (KEK) using PBKDF2. 
 
 ```shell
 $ redis-cli keys dek:*
@@ -45,7 +58,7 @@ Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbbbbb:eeeeeeeeee
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
 
-I have chosen 100k iterations, which takes a few hundred millis. I don't see why this couldn't be 1M for production use, since this takes a couple of seconds, which is tolerable for loading keys? 
+A large number of iterations is used to make the hashing operation take as long as is tolerable, to combat brute-force attacks. The resulting hash is a KEK, which is used to encrypt the DEK (using AES with a 256bit key length). I have chosen 100k iterations, which takes a few hundred millis. I don't see why this couldn't be 1M for production use, since this takes a couple of seconds, which is tolerable for loading keys? 
 
 Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
 

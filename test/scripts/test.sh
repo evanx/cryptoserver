@@ -6,13 +6,14 @@ export APP_PORT=8443
 export SERVER_KEY=tmp/certs/server.key
 export SERVER_CERT=tmp/certs/server.cert
 export CA_CERT=tmp/certs/ca.cert
+export ENV_TYPE=PRODUCTION
 
 # util methods
 
 c2get() {
   uri=$1
   user=$2
-  echo -n "GET $uri as $user: "
+  echo "GET $uri as $user"
   curl -s -k https://localhost:8443/$uri --key tmp/certs/$user.key --cert tmp/certs/$user.cert 
   echo " (exitCode $?)"
 }
@@ -25,7 +26,7 @@ c3post() {
   uri=$1
   user=$2
   data=$3
-  echo -n "POST $uri as $user with data '$data': "
+  echo "POST $uri as $user with data '$data'"
   curl -s -k https://localhost:8443/$uri -d "$data" --key tmp/certs/$user.key --cert tmp/certs/$user.cert
   echo " (exitCode $?)"
 }
