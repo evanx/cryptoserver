@@ -50,7 +50,7 @@ c0gen() {
   c1genrsa brent
   c1genrsa henry
   c1removeprot server
-  c0rsync
+  #c0rsync
 }
 
 c0gen
