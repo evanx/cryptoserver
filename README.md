@@ -22,9 +22,9 @@ We send the following client-authenticated HTTPS requests.
 
 ```shell
 GET genkey/testdek/3 as evan
-POST secret/testdek as evan with data 'eeeeeeeeeeee'
-POST secret/testdek as henry with data 'hhhhhhhhhhhh'
-POST secret/testdek as brent with data 'bbbbbbbbbbbb'
+POST secret/testdek as evan with data 'eeeeee'
+POST secret/testdek as henry with data 'hhhhhh'
+POST secret/testdek as brent with data 'bbbbbb'
 GET key/testdek as evan
 GET load/testdek as evan
 
@@ -46,16 +46,16 @@ $ redis-cli hkeys dek:testdek
 5) "iv"
 
 $ redis-cli redis hget dek:testdek dek:brent:evan
-"149d7678399975d7a3b8b9b359afdf108acde2852b2400512e"
+"8b4ed0ab35ccf9fdd6da54de34"
 
 $ redis-cli redis hget dek:testdek dek:brent:henry
-"149d4ca1066390575e574f66a8d6e283afa64e575481bc4fe0"
+"af85a720e662a80ceacd76a318"
 
 $ redis-cli redis hget dek:testdek dek:evan:henry
-"3a5c906bae38b7eaf70b1f844f90351994403c09ddad6fa487"
+"3c901b9862be07ee80a66b365f"
 ```
 
-Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbbbbb:eeeeeeeeeeee` in clear-text. The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
+Incidently, the concatenated secret for `brent:evan` is `bbbbbb:eeeeee` in clear-text. The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
