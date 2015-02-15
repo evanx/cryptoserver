@@ -45,7 +45,7 @@ $ redis-cli redis hget dek:testdek secret:evan:henry
 "25b6d6132970f58a477d45fd68b66f592cda94"
 ```
 
-The concatenated password for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text.
+Incidently, the concatenated password for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text.
 
 ##
 Home: https://github.com/evanx/vellum/wiki
