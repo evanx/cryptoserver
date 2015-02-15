@@ -27,7 +27,6 @@ POST secret/testdek as henry with data 'hhhhhh'
 POST secret/testdek as brent with data 'bbbbbb'
 ```
 
-
 Incidently, it we configure for a production environment, then we validate the secret "complexity," when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
 
 ```shell
