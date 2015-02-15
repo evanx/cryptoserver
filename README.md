@@ -18,21 +18,25 @@ Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyser
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any connection without a cert client, is redirected to `/help.`
 
 
-We send the following client-authenticated HTTPS requests.
+We send the following client-authenticated HTTPS requests to generate a DEK.
 
 ```shell
 GET genkey/testdek/3 as evan
 POST secret/testdek as evan with data 'eeeeee'
 POST secret/testdek as henry with data 'hhhhhh'
 POST secret/testdek as brent with data 'bbbbbb'
-GET key/testdek as evan
-GET load/testdek as evan
-
 ```
+
 
 Incidently, if in a production environment, then we validate the secret "complexity," when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used to derive the key-encrypting key (KEK) using PBKDF2. 
+```shell
+$ curl -s -k https://localhost:8443/secret/testdek -d bbbbbbbbbbbb \
+    --key tmp/certs/brent.key --cert tmp/certs/brent.cert
+{"message":"insufficient complexity"}
+```
+
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. 
 
 ```shell
 $ redis-cli keys dek:*
