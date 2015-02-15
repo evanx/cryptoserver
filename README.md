@@ -43,8 +43,8 @@ $ redis-cli redis hget dek:testdek secret:evan:henry
 
 Incidently, the concatenated password for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text.
 
-For the key generation i.e. of a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes()` (see 
-our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper). 
+For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
+our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKey](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
 
 Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
 
