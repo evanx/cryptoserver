@@ -51,7 +51,7 @@ Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsumme
 
 ## Other resources
 
-Wiki: https://github.com/evanx/vellum/wiki
+Wiki home: https://github.com/evanx/vellum/wiki
 
 
 
