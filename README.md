@@ -18,8 +18,7 @@ Then run the test script: https://github.com/evanx/keyserver/blob/master/test/sc
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just display this `README.md` markdown file in HTML. Incidently connection without a cert client, is redirect to `/help.`
 
-## other 
-
-For various (un)related technical articles and sample code: https://github.com/evanx/vellum/wiki
+<hr>
+Home: https://github.com/evanx/vellum/wiki
 
 
