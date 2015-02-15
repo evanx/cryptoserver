@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# enviroment
+
+export APP_PORT=8443
+export SERVER_KEY=tmp/certs/server.key
+export SERVER_CERT=tmp/certs/server.cert
+export CA_CERT=tmp/certs/ca.cert
+
 # util methods
 
 c1get() {
