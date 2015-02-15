@@ -18,6 +18,12 @@ Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyser
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just display this `README.md` markdown file in HTML. Incidently connection without a cert client, is redirect to `/help.`
 
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge passwords. The concatenated clear-text passwords of a duo of custodians is used as the key-encrypting key (KEK). The split-knowledge password is hashed using PBKDF2 with a large number of iterations, to combat brute-force attacks. The resulting hash is our KEK, and is used to encrypted the DEK using AES with a 256bit key length. 
+
+For the key generation i.e. of a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using a RNG.
+
+Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
+
 ```shell
 $ redis-cli keys dek:*
 1) "dek:testdek"
