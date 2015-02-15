@@ -83,6 +83,7 @@ c0clientTask() {
   sleep .2
   echo; echo "## client output"
   cat $out
+  sleep .5
   c0redisShow
 }
 
