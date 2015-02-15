@@ -28,7 +28,7 @@ POST secret/testdek as brent with data 'bbbbbb'
 ```
 
 
-Incidently, if in a production environment, then we validate the secret "complexity," when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
+Incidently, it we configure for a production environment, then we validate the secret "complexity," when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
 
 ```shell
 $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
