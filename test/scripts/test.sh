@@ -54,15 +54,20 @@ c0genkey() {
   c2get genkey/$keyName/3 evan
 }
 
-c0redisShow() {
-  echo; echo '##' redis-cli keys 'dek:*'
-  redis-cli keys 'dek:*'
-  echo; echo '##' redis-cli hkeys "dek:$keyName"
-  redis-cli hkeys "dek:$keyName"
-  echo; echo '##' redis-cli redis hget "dek:$keyName"
+c1hget() {
+  echo -n '==' redis-cli redis hget "dek:$keyName" '== ' 
   redis-cli hget "dek:$keyName" 'secret:brent:evan'
-  redis-cli hget "dek:$keyName" 'secret:brent:henry'
-  redis-cli hget "dek:$keyName" 'secret:evan:henry'
+}
+
+c0redisShow() {
+  echo; echo '==' redis-cli keys 'dek:*'
+  redis-cli keys 'dek:*'
+  echo; echo '==' redis-cli hkeys "dek:$keyName"
+  redis-cli hkeys "dek:$keyName"
+  echo; 
+  c1hget secret:brent:evan
+  c1hget secret:brent:henry
+  c1hget secret:evan:henry
 }
 
 c0clear() {
@@ -81,7 +86,7 @@ c0clientTask() {
   sleep .5
   c0client > $out
   sleep .2
-  echo; echo "## client output"
+  echo; echo "== client output"
   cat $out
   sleep .5
   c0redisShow
