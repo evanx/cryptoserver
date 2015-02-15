@@ -49,7 +49,7 @@ our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryp
 Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
 
 
-##
+## Contact
 Wiki: https://github.com/evanx/vellum/wiki
 Twitter: https://twitter.com/evanxsummers
 
