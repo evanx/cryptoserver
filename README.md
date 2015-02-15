@@ -36,13 +36,13 @@ $ redis-cli hkeys dek:testdek
 5) "iv"
 
 $ redis-cli redis hget dek:testdek secret:brent:evan
-"50440e8a39f8e5"
+"58ba7415b10fc5d8f319123358a03dbf9d826e"
 
 $ redis-cli redis hget dek:testdek secret:brent:henry
-"dbbc09a814004e"
+"2c41b20e2d2f9f4752334ab4bb7596813a8cf9"
 
 $ redis-cli redis hget dek:testdek secret:evan:henry
-"f63a11bead777c"
+"25b6d6132970f58a477d45fd68b66f592cda94"
 ```
 
 ##
