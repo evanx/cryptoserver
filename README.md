@@ -1,6 +1,6 @@
 # keyserver - a dual-control crypto server in Node.js
 
-We generate a symmetric encryption key protected by a "split knowledge" secret, and requiring "dual control" to load the key, as per PCI DSS. Incidently, I'm deliberately using the word "secret" rather than "password," because PCI DSS requires that "passwords" be changed every 90 days ;)
+We generate a symmetric encryption key protected by a "split knowledge" secret, and requiring "dual control" to load the key, as per the PCI DSS. Incidently, I'm deliberately using the word "secret" rather than "password," because the PCI DSS requires that "passwords" be changed every 90 days ;)
 
 This is a Node.js re-implementation and extension of a previous <a href="https://github.com/evanx/dualcontrol">dualcontrol</a> Java implementation, as discussed in 
 my <a href="https://github.com/evanx/vellum/wiki/DualControl">Dual Control</a> article.
