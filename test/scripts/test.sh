@@ -6,7 +6,7 @@ export APP_PORT=8443
 export SERVER_KEY=tmp/certs/server.key
 export SERVER_CERT=tmp/certs/server.cert
 export CA_CERT=tmp/certs/ca.cert
-export ENV_TYPE=PRODUCTION
+export ENV_TYPE=testing
 
 # util methods
 
