@@ -16,7 +16,7 @@ First generate certs using openssl: https://github.com/evanx/keyserver/blob/mast
 
 Then run the test script: https://github.com/evanx/keyserver/blob/master/test/scripts/test.sh
 
-When the app is running, you can access via your browser the URL `https://localhost:8443/help.` This should display this `README.md` markdown file in HTML. Incidently any such connection without a cert client, is redirect to `/help.`
+When the app is running, you can view the URL `https://localhost:8443/help` in your browser. Actually this should just display this `README.md` markdown file in HTML. Incidently connection without a cert client, is redirect to `/help.`
 
 ## other 
 
