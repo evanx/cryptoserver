@@ -87,7 +87,7 @@ c0clientTask() {
   out=tmp/client.out
   sleep .5
   c0client > $out
-  sleep .2
+  sleep .5
   echo; echo "## client output"
   cat $out
   sleep .5
