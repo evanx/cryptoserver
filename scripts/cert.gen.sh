@@ -30,7 +30,8 @@ c1genrsa() {
 }
 
 c0rsync() {
-  dest=/var/mobi/certs/keyserver
+  dest=/var/keyserver/certs
+  [ -d $dest ] || exit 1
   echo; echo "## rsync server key and cert to $dest"
   ls -l ca.* server.* 
   mkdir -p $dest
