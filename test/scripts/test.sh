@@ -9,13 +9,6 @@ export CA_CERT=tmp/certs/ca.cert
 
 # util methods
 
-c1get() {
-  uri=$1
-  echo -n "GET $uri as $user: "
-  curl -s -k https://localhost:8443/$uri --key tmp/certs/evan.key --cert tmp/certs/evan.cert 
-  echo " (exitCode $?)"
-}
-
 c2get() {
   uri=$1
   user=$2
@@ -23,6 +16,11 @@ c2get() {
   curl -s -k https://localhost:8443/$uri --key tmp/certs/$user.key --cert tmp/certs/$user.cert 
   echo " (exitCode $?)"
 }
+
+c1get() {
+  c2get $1 evan
+}
+
 
 c3post() {
   uri=$1
