@@ -31,7 +31,7 @@ POST secret/testdek as brent with data 'bbbbbb'
 Incidently, if in a production environment, then we validate the secret "complexity," when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
 
 ```shell
-$ curl -s -k https://localhost:8443/secret/testdek -d bbbbbbbbbbbb \
+$ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
     --key tmp/certs/brent.key --cert tmp/certs/brent.cert
 {"message":"insufficient complexity"}
 ```
