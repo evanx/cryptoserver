@@ -65,7 +65,7 @@ The field `dek:brent:evan` et al is the encrypted DEK using AES with a 256bit ke
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
 
-A large number of iterations is used for PBKDF2 to make the hashing operation take as long as is tolerable to us. This is a critical defense against brute-force attacks against a compromised encrypted DEK. I have chosen 100k iterations, which takes a few hundred milliseconds. I don't see why this couldn't be 1M for production use, since this takes a couple of seconds, which is tolerable for loading keys? 
+A large number of iterations is used for PBKDF2, to make the hashing operation take as long as is tolerable to us. This is a critical defense against brute-force attacks against a compromised encrypted DEK. I have chosen 100k iterations, which takes a few hundred milliseconds. I don't see why this couldn't be 1M for production use, since this takes a couple of seconds, which is tolerable for loading keys? 
 
 Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
 
