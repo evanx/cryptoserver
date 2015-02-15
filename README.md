@@ -35,7 +35,7 @@ $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
 {"message":"insufficient complexity"}
 ```
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. For example, the concatenated secret for `brent:evan` duo is `bbbbbb:eeeeee` in clear-text. 
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. For example, the concatenated secret for the `brent:evan` duo is `bbbbbb:eeeeee` in clear-text. 
 
 ```shell
 $ redis-cli keys 'dek:*'
