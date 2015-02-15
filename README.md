@@ -3,7 +3,9 @@
 We generate a symmetric encryption key protected by a "split knowledge" secret, and requiring "dual control" to load the key, as per the PCI DSS. Incidently, I'm deliberately using the word "secret" rather than "password," because the PCI DSS requires that "passwords" be changed every 90 days ;)
 
 This is a Node.js re-implementation and extension of a previous <a href="https://github.com/evanx/dualcontrol">dualcontrol</a> Java implementation, as discussed in 
-my <a href="https://github.com/evanx/vellum/wiki/DualControl">Dual Control</a> article.
+my <a href="https://github.com/evanx/vellum/wiki/DualControl">Dual Control</a> article. 
+
+As of 15 February 2015, this is an incomplete work-in-progress.
 
 It provides a secure "vault" server with client-authenticated HTTPS access. It uses Redis to store encrypted data and its encryption keys. Encryption keys are protected by split-knowledge secrets, hashed with PDKDF2, and encrypted using AES.
 
