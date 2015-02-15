@@ -35,7 +35,7 @@ $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
 {"message":"insufficient complexity"}
 ```
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. 
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. For example, the concatenated secret for `brent:evan` duo is `bbbbbb:eeeeee` in clear-text. 
 
 ```shell
 $ redis-cli keys 'dek:*'
@@ -58,7 +58,7 @@ $ redis-cli redis hget dek:testdek dek:evan:henry
 "3c901b9862be07ee80a66b365f"
 ```
 
-Incidently, the concatenated secret for `brent:evan` is `bbbbbb:eeeeee` in clear-text. The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
+The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
