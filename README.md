@@ -24,23 +24,23 @@ $ redis-cli keys dek:*
 1) "dek:testdek"
 
 $ redis-cli hkeys dek:testdek
-1) "secret:brent:evan"
-2) "secret:brent:henry"
-3) "secret:evan:henry"
+1) "dek:brent:henry"
+2) "dek:brent:evan"
+3) "dek:evan:henry"
 4) "salt"
 5) "iv"
 
-$ redis-cli redis hget dek:testdek secret:brent:evan
-"58ba7415b10fc5d8f319123358a03dbf9d826e"
+$ redis-cli redis hget dek:testdek dek:brent:evan
+"c5e1d92301b43815f6e6f755249e9104e3b06c"
 
-$ redis-cli redis hget dek:testdek secret:brent:henry
-"2c41b20e2d2f9f4752334ab4bb7596813a8cf9"
+$ redis-cli redis hget dek:testdek dek:brent:henry
+"96f6cc66a5b8122d6eee8550fef62f64308f10"
 
-$ redis-cli redis hget dek:testdek secret:evan:henry
-"25b6d6132970f58a477d45fd68b66f592cda94"
+$ redis-cli redis hget dek:testdek dek:evan:henry
+"a45872a12d9783b00f073ae68a68dc04795b7a"
 ```
 
-Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text.
+Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text. The data for the hash key `dek:brent:evan` et al is the encrypted DEK, which is "known to no single person" as per PCI DSS requirements. It is encrypted for each split-knowledge secret, which is comprised of two custodians' secrets, hashed with PBKDF2, and encrypted using AES with the resulting KEK. It is important for the PBKDF2 to use a large number of iterations, so that it takes as long as is tolerable. (This combats brute-force attacks.)
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
