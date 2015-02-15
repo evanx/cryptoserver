@@ -1,13 +1,17 @@
-
-  curl -s -k https://localhost:8443/genkey/dek2015/3 --key tmp/certs/evan.key --cert tmp/certs/evan.cert
+ 
+  curl -s -k https://localhost:8443/genkey/testdek/3 --key tmp/certs/evan.key --cert tmp/certs/evan.cert 
   echo
+  sleep .1
 
-  curl -s -k https://localhost:8443/secret/dek2015 -d 'password1234' --key tmp/certs/evan.key --cert tmp/certs/evan.cert
+  curl -s -k https://localhost:8443/secret/testdek -d 'eee' --key tmp/certs/evan.key --cert tmp/certs/evan.cert
   echo
+  sleep .1
 
-  curl -s -k https://localhost:8443/secret/dek2015 -d 'password1234' --key tmp/certs/henry.key --cert tmp/certs/henry.cert
+  curl -s -k https://localhost:8443/secret/testdek -d 'hhh' --key tmp/certs/henry.key --cert tmp/certs/henry.cert 
   echo
+  sleep .1
 
-  curl -s -k https://localhost:8443/secret/dek2015 -d 'password1234' --key tmp/certs/brent.key --cert tmp/certs/brent.cert
+  curl -s -k https://localhost:8443/secret/testdek -d 'bbb' --key tmp/certs/brent.key --cert tmp/certs/brent.cert
   echo
+  sleep .1
 
