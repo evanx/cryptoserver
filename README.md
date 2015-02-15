@@ -30,7 +30,7 @@ GET load/testdek as evan
 
 ```
 
-Incidently, if the environment variable `ENV_TYPE` is set `PRODUCTION,` then we validate the secret "complexity" and throw an error "insufficient complexity," when custodians submit secrets for password generation.
+Incidently, if the environment variable `ENV_TYPE` is set `PRODUCTION,` then we validate the secret "complexity" and throw an error "insufficient complexity," when custodians submit secrets for key generation.
 
 The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used to derive the key-encrypting key (KEK) using PBKDF2. 
 
