@@ -82,11 +82,12 @@ c0client() {
   sleep 1 
   c1get key/$keyName  
   c1get load/$keyName 
+  c0postsecret2
 }
 
 c0clientTask() {
   out=tmp/client.out
-  sleep .2
+  sleep .5
   c0client > $out
   sleep .5
   echo; echo "## client output"
