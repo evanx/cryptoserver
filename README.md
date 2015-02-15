@@ -44,8 +44,8 @@ $ redis-cli redis hget dek:testdek secret:brent:henry
 $ redis-cli redis hget dek:testdek secret:evan:henry
 "f63a11bead777c"
 ```
-<footnote>
-   Home: https://github.com/evanx/vellum/wiki
-</footnote>
+
+##
+Home: https://github.com/evanx/vellum/wiki
 
 
