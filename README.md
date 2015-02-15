@@ -50,7 +50,9 @@ Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsumme
 
 
 ## Resources
+
 Wiki: https://github.com/evanx/vellum/wiki
+
 Twitter: https://twitter.com/evanxsummers
 
 
