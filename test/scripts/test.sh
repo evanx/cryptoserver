@@ -55,8 +55,9 @@ c0genkey() {
 }
 
 c1hget() {
-  echo -n '==' redis-cli redis hget "dek:$keyName" '== ' 
-  redis-cli hget "dek:$keyName" 'secret:brent:evan'
+  hkey=$1
+  echo -n '==' redis-cli redis hget dek:$keyName $hkey '== ' 
+  redis-cli hget dek:$keyName $hkey
 }
 
 c0redisShow() {
