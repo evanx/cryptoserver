@@ -10,6 +10,14 @@ It provides a secure "vault" server with client-authenticated HTTPS access. It u
 
 See this app's entry point: <a href="https://github.com/evanx/keyserver/blob/master/lib/app_keyserver.js">app_keyserver.js</a>.
 
+## testing 
+
+First generate certs using openssl: https://github.com/evanx/keyserver/blob/master/test/scripts/certGen.sh
+
+Then run the test script: https://github.com/evanx/keyserver/blob/master/test/scripts/test.sh
+
+## other 
+
 For various (un)related technical articles and sample code: https://github.com/evanx/vellum/wiki
 
 
