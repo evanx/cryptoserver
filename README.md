@@ -16,6 +16,8 @@ First generate certs using openssl: https://github.com/evanx/keyserver/blob/mast
 
 Then run the test script: https://github.com/evanx/keyserver/blob/master/test/scripts/test.sh
 
+When the app is running, you can access in your browser `https://localhost:8443/help,` which should display this `README.md` markdown file in HTML. Any such connection without a cert client is redirect to `/help.`
+
 ## other 
 
 For various (un)related technical articles and sample code: https://github.com/evanx/vellum/wiki
