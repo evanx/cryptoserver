@@ -40,14 +40,14 @@ c1info() {
 keyName=testdek
 
 c0postsecret2() {
-  c3post secret/$keyName evan "eeeeeeeee"
-  c3post secret/$keyName henry "hhhhhhhhh"
+  c3post secret/$keyName evan "eeeeeeeeeeee"
+  c3post secret/$keyName henry "hhhhhhhhhhhh"
 }
 
 c0postsecret3() {
-  c3post secret/$keyName evan "eeeeeeeee"
-  c3post secret/$keyName henry "hhhhhhhhh"
-  c3post secret/$keyName brent "bbbbbbbbb"
+  c3post secret/$keyName evan "eeeeeeeeeeee"
+  c3post secret/$keyName henry "hhhhhhhhhhhh"
+  c3post secret/$keyName brent "bbbbbbbbbbbb"
 }
 
 c0genkey() {

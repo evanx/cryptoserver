@@ -31,16 +31,16 @@ $ redis-cli hkeys dek:testdek
 5) "iv"
 
 $ redis-cli redis hget dek:testdek dek:brent:evan
-"c5e1d92301b43815f6e6f755249e9104e3b06c"
+"149d7678399975d7a3b8b9b359afdf108acde2852b2400512e"
 
 $ redis-cli redis hget dek:testdek dek:brent:henry
-"96f6cc66a5b8122d6eee8550fef62f64308f10"
+"149d4ca1066390575e574f66a8d6e283afa64e575481bc4fe0"
 
 $ redis-cli redis hget dek:testdek dek:evan:henry
-"a45872a12d9783b00f073ae68a68dc04795b7a"
+"3a5c906bae38b7eaf70b1f844f90351994403c09ddad6fa487"
 ```
 
-Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in clear-text. The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
+Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbbbbb:eeeeeeeeeeee` in clear-text. The field `dek:brent:evan` et al is the encrypted DEK. The DEK is "known to no single person" (in clear-text) as per PCI DSS requirements. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. As such two custodians are required to decrypt the key, i.e. <i>dual control.</i>
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
