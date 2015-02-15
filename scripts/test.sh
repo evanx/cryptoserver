@@ -7,14 +7,14 @@ c1curlget() {
 keyName=testdek
 
 c0redisShow() {
-   echo; echo + redis-cli keys 'dek:*'
+   echo; echo; echo + redis-cli keys 'dek:*'
    redis-cli keys 'dek:*'
    echo; echo + redis-cli hkeys "dek:$keyName"
    redis-cli hkeys "dek:$keyName"
    echo; echo + redis-cli redis hget "dek:$keyName"
-   redis-cli hget "dek:$keyName" 'brent:evan'
-   redis-cli hget "dek:$keyName" 'brent:henry'
-   redis-cli hget "dek:$keyName" 'evan:henry'
+   redis-cli hget "dek:$keyName" 'secret:brent:evan'
+   redis-cli hget "dek:$keyName" 'secret:brent:henry'
+   redis-cli hget "dek:$keyName" 'secret:evan:henry'
 }
 
 

@@ -26,6 +26,7 @@
     "express": "~4.11.2",
     "express-bunyan-logger": "~1.1.1",
     "gpg": "~0.3.4",
+    "marked": "^0.3.3",
     "openssl-wrapper": "~0.2.1",
     "performance-now": "~0.2.0",
     "redis": "~0.12.1",
