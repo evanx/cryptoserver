@@ -27,7 +27,7 @@ POST secret/testdek as henry with data 'hhhhhh'
 POST secret/testdek as brent with data 'bbbbbb'
 ```
 
-where we have three custodians.
+where we have three custodians submitting secrets for a new key named `testdek.`
 
 Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
 
