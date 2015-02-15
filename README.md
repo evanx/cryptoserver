@@ -45,6 +45,8 @@ Incidently, the concatenated secret for `brent:evan` is `bbbbbbbbb:eeeeeeeee` in
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated is `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) wrapper, and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
 
+I have chosen 100k iterations, which takes a few hundred millis. I don't see why this couldn't be 1M for production use, since this takes a couple of seconds, which is tolerable for loading keys? 
+
 Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
 
 
