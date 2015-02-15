@@ -21,7 +21,6 @@ c1get() {
   c2get $1 evan
 }
 
-
 c3post() {
   uri=$1
   user=$2
