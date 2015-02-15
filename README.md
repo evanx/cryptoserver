@@ -17,7 +17,7 @@ Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyser
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any connection without a cert client, is redirected to `/help.`
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used as the key-encrypting key (KEK). The split-knowledge secret is hashed using PBKDF2 with a large number of iterations, to combat brute-force attacks. The resulting hash is our KEK, and is used to encrypted the DEK using AES with a 256bit key length. 
+The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of a duo of custodians is used as the key-encrypting key (KEK). The split-knowledge secret is hashed using PBKDF2 with a large number of iterations, to combat brute-force attacks. The resulting hash is our KEK, and is used to encrypt the DEK using AES with a 256bit key length. 
 
 ```shell
 $ redis-cli keys dek:*
