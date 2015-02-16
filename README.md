@@ -17,7 +17,7 @@ First generate certs using openssl: [test/scripts/certGen.sh](https://github.com
 
 Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyserver/blob/master/test/scripts/test.sh)
 
-When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any connection without a cert client, is redirected to `/help.`
+When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.`
 
 
 We send the following client-authenticated HTTPS requests to generate a DEK.
