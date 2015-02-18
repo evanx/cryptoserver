@@ -1,4 +1,4 @@
-# keyserver - a dual-control crypto server in Node.js
+# cryptoserver - a dual-control crypto server in Node.js
 
 We generate a symmetric encryption key protected by a "split knowledge" secret, and requiring "dual control" to load the key, as per the PCI DSS. Incidently, I'm deliberately using the word "secret" rather than "password," because the PCI DSS requires that "passwords" be changed every 90 days ;)
 
@@ -9,13 +9,13 @@ As of 15 February 2015, this is an incomplete work-in-progress.
 
 It provides a secure "vault" server with client-authenticated HTTPS access. It uses Redis to store encrypted data and its encryption keys. Encryption keys are protected by split-knowledge secrets, hashed with PDKDF2, and encrypted using AES.
 
-See this app's entry point: <a href="https://github.com/evanx/keyserver/blob/master/lib/app_keyserver.js">lib/app_keyserver.js</a>.
+See this app's entry point: <a href="https://github.com/evanx/cryptoserver/blob/master/lib/app_cryptoserver.js">lib/app_cryptoserver.js</a>.
 
 ## testing 
 
-First generate certs using openssl: [test/scripts/certGen.sh](https://github.com/evanx/keyserver/blob/master/test/scripts/certGen.sh)
+First generate certs using openssl: [test/scripts/certGen.sh](https://github.com/evanx/cryptoserver/blob/master/test/scripts/certGen.sh)
 
-Then run the test script: [test/scripts/test.sh](https://github.com/evanx/keyserver/blob/master/test/scripts/test.sh)
+Then run the test script: [test/scripts/test.sh](https://github.com/evanx/cryptoserver/blob/master/test/scripts/test.sh)
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.`
 
@@ -65,7 +65,7 @@ $ redis-cli redis hget dek:testdek dek:evan:henry
 The field `dek:brent:evan` et al is the encrypted DEK using AES with a 256bit key length. It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is "known to no single person" (in clear-text). 
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using `crypto.randomBytes` - see 
-our [lib/cryptoUtils.js](https://github.com/evanx/keyserver/blob/master/lib/cryptoUtils.js) and [lib/GenerateKe.jsy](https://github.com/evanx/keyserver/blob/master/lib/GenerateKey.js).
+our [lib/cryptoUtils.js](https://github.com/evanx/cryptoserver/blob/master/lib/cryptoUtils.js) and [lib/GenerateKe.jsy](https://github.com/evanx/cryptoserver/blob/master/lib/GenerateKey.js).
 
 A large number of iterations is used for PBKDF2, to make the hashing operation take much longer. This is a critical defense against brute-force attacks against a compromised encrypted DEK. I have chosen 100k iterations, which takes a few hundred milliseconds. I don't see why this couldn't be even higher for production use, since a second or two is easily tolerable for loading a key e.g. upon a server restart.
 

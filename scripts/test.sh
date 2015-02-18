@@ -104,7 +104,7 @@ c0default() {
   c0kill
   c0clear
   c0clientTask & 
-    nodejs lib/app_keyserver.js | bunyan -o short
+    nodejs lib/app_cryptoserver.js | bunyan -o short
 }
 
 if [ $# -gt 0 ]

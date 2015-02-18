@@ -2,7 +2,7 @@
 var async = require('async');
 var crypto = require('crypto');
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "keyserver", level: 'debug'});
+var log = bunyan.createLogger({name: "cryptoserver", level: 'debug'});
 var commonUtils = require('../lib/commonUtils');
 var cryptoUtils = require('../lib/cryptoUtils');
 

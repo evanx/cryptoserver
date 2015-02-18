@@ -1,5 +1,5 @@
 {
-  "name": "keyserver",
+  "name": "cryptoserver",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/evanx/keyserver.git"
+    "url": "git://github.com/evanx/cryptoserver.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/evanx/keyserver/issues"
+    "url": "https://github.com/evanx/cryptoserver/issues"
   },
-  "homepage": "https://github.com/evanx/keyserver",
+  "homepage": "https://github.com/evanx/cryptoserver",
   "dependencies": {
     "async": "~0.9.0",
     "bluebird": "~2.9.8",
