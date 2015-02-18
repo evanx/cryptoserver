@@ -1,4 +1,4 @@
-# cryptoserver - a dual-control crypto server in Node.js
+### cryptoserver - a dual-control crypto server in Node.js
 
 We generate a symmetric encryption key protected by a "split knowledge" secret, and requiring "dual control" to load the key, as per the PCI DSS. Incidently, I'm deliberately using the word "secret" rather than "password," because the PCI DSS requires that "passwords" be changed every 90 days ;)
 
@@ -11,7 +11,7 @@ It provides a secure "vault" server with client-authenticated HTTPS access. It u
 
 See this app's entry point: <a href="https://github.com/evanx/cryptoserver/blob/master/lib/app_cryptoserver.js">lib/app_cryptoserver.js</a>.
 
-## testing 
+#### testing 
 
 First generate certs using openssl: [test/scripts/certGen.sh](https://github.com/evanx/cryptoserver/blob/master/test/scripts/certGen.sh)
 
