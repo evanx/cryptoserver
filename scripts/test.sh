@@ -80,9 +80,9 @@ c0client() {
   c0genkey
   c0postsecret3 
   sleep 1 
-  c1get key/$keyName  
-  c1get load/$keyName 
-  c0postsecret2
+  #c1get key/$keyName  
+  #c1get load/$keyName 
+  #c0postsecret2
 }
 
 c0clientTask() {
@@ -91,9 +91,9 @@ c0clientTask() {
   c0client > $out
   sleep .5
   echo; echo "## client output"
-  cat $out
+  cat $out 
   sleep .5
-  c0redisShow
+  #c0redisShow
 }
 
 c0kill() {
