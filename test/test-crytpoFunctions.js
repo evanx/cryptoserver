@@ -2,14 +2,14 @@
 var async = require('async');
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: module.filename, level: 'debug'});
-var cryptoUtils = require('../lib/cryptoUtils');
-var commonUtils = require('../lib/commonUtils');
-var appUtils = require('../lib/appUtils');
-var CryptoAsync = require('./CryptoAsync');
+var cryptoFunctions = require('../lib/cryptoFunctions');
+var commonFunctions = require('../lib/commonFunctions');
+var appFunctions = require('../lib/appFunctions');
+var cryptoFunctionsAsync = require('./cryptoFunctionsAsync');
 
 
 function test() {
-   var cryptoAsync = new CryptoAsync({
+   var cryptoAsync = cryptoFunctionsAsync.create({
       secret: 'aaaa:bbbb'
    });
    async.series([
@@ -23,11 +23,11 @@ function test() {
       } else {
          cryptoAsync.logResults();   
          var results = cryptoAsync.getResults();
-         var cipher = cryptoUtils.createCipheriv(results.key, results.iv);
-         var decipher = cryptoUtils.createDecipheriv(results.key, results.iv);
+         var cipher = cryptoFunctions.createCipheriv(results.key, results.iv);
+         var decipher = cryptoFunctions.createDecipheriv(results.key, results.iv);
          var clearText = "hello, crypto world!";
-         var encrypted = cryptoUtils.encrypt(cipher, clearText);
-         var decrypted = cryptoUtils.decrypt(decipher, encrypted);
+         var encrypted = cryptoFunctions.encrypt(cipher, clearText);
+         var decrypted = cryptoFunctions.decrypt(decipher, encrypted);
          log.info('decrypted', typeof decrypted, decrypted.length, decrypted);         
       }
    });
