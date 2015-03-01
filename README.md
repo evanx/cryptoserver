@@ -23,7 +23,7 @@ Then run the test script: [scripts/test.sh](https://github.com/evanx/cryptoserve
 When the app is running, you can view the URL <a href="https://localhost:8443/help">https://localhost:8443/help</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.`
 Since a self-signed server certificate is used, your browser will issue an "unsafe" warning.
 
-We send the following client-authenticated HTTPS requests to generate a DEK.
+The test script uses `curl` to issue the following client-authenticated HTTPS requests to generate a DEK.
 
 ```shell
 GET genkey/testdek/3 as evan
