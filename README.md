@@ -20,7 +20,7 @@ First generate certs using openssl: [scripts/certGen.sh](https://github.com/evan
 
 Then run the test script: [scripts/test.sh](https://github.com/evanx/cryptoserver/blob/master/scripts/test.sh)
 
-When the app is running, you can view the URL <a href="https://localhost:8443/help">`https://localhost:8443/help`</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.`
+When the app is running, you can view the URL <a href="https://localhost:8443/help">https://localhost:8443/help</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.`
 Since a self-signed server certificate is used, your browser will issue an "unsafe" warning.
 
 We send the following client-authenticated HTTPS requests to generate a DEK.
