@@ -2,12 +2,9 @@
 
 We generate a symmetric encryption key protected by a "split knowledge" secret, and requiring "dual control" to load the key, as per the PCI DSS. Incidently, I'm deliberately using the word "secret" rather than "password," because the PCI DSS requires that "passwords" be changed every 90 days ;)
 
-This is a Node.js re-implementation and extension of a previous <a href="https://github.com/evanx/dualcontrol">dualcontrol</a> Java implementation, as discussed in 
-my <a href="https://github.com/evanx/vellum/wiki/DualControl">Dual Control</a> article. 
+This is a Node.js re-implementation and extension of a previous <a href="https://github.com/evanx/dualcontrol">dualcontrol</a> Java implementation, as discussed in my <a href="https://github.com/evanx/vellum/wiki/DualControl">Dual Control</a> article. 
 
-It provides a secure "vault" server with client-authenticated HTTPS access. 
-It uses Redis to store encrypted data and its encryption keys. 
-Encryption keys are protected by split-knowledge secrets, hashed with PBKDF2, and encrypted using AES.
+It provides a secure "vault" server with client-authenticated HTTPS access. It uses Redis to store encrypted data and its encryption keys. Encryption keys are protected by split-knowledge secrets, hashed with PBKDF2, and encrypted using AES.
 
 See this app's entry point: <a href="https://github.com/evanx/cryptoserver/blob/master/lib/app_cryptoserver.js">lib/app_cryptoserver.js</a>.
 
@@ -20,8 +17,7 @@ First generate certs using openssl: [scripts/certGen.sh](https://github.com/evan
 
 Then run the test script: [scripts/test.sh](https://github.com/evanx/cryptoserver/blob/master/scripts/test.sh)
 
-When the app is running, you can view the URL <a href="https://localhost:8443/help">https://localhost:8443/help</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.`
-Since a self-signed server certificate is used, your browser will issue an "unsafe" warning.
+When the app is running, you can view the URL <a href="https://localhost:8443/help">https://localhost:8443/help</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.` Since a self-signed server certificate is used, your browser will issue an "unsafe" warning.
 
 The test script uses `curl` to issue the following client-authenticated HTTPS requests to generate a DEK.
 
@@ -34,7 +30,8 @@ POST secret/testdek as brent with data 'bbbbbb'
 
 where we have three custodians submitting new secrets for a new key named `testdek.`
 
-Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
+Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long. Otherwise the response has a HTTP status code of 500.
+
 
 ```shell
 $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
@@ -42,7 +39,7 @@ $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
 {"message":"insufficient complexity"}
 ```
 
-The following illustrates a data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. For example, the concatenated secret for the `brent:evan` duo is `bbbbbb:eeeeee` in clear-text. 
+The following Redis CLI commands show the data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. For example, the concatenated secret for the `brent:evan` duo is `bbbbbb:eeeeee` in clear-text. 
 
 ```shell
 $ redis-cli keys 'dek:*'
