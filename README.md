@@ -6,7 +6,7 @@ This is a Node.js re-implementation and extension of a previous <a href="https:/
 
 As of 1 March, the key generation, encryption, storage, and it's decryption and loading has been implemented and is working, but encrypting and decrypting data is not yet implemented.
 
-It provides a secure "vault" server with client-authenticated HTTPS access. It uses Redis to store encrypted data and its encryption keys. Encryption keys are protected by split-knowledge secrets, hashed with PBKDF2, and encrypted using AES.
+It provides a secure "vault" server with client-authenticated HTTPS access. It uses Redis to store encryption keys and data. Encryption keys are protected by split-knowledge secrets, hashed with PBKDF2, and encrypted using AES.
 
 See this app's entry point: <a href="https://github.com/evanx/cryptoserver/blob/master/lib/app_cryptoserver.js">lib/app_cryptoserver.js</a>.
 
