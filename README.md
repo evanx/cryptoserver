@@ -15,7 +15,7 @@ This side project is developed as an exercise in Node crypto. As such, do not us
 
 ### testing 
 
-First generate certs using openssl: [scripts/certGen.sh](https://github.com/evanx/cryptoserver/blob/master/scripts/certGen.sh)
+First generate test certs using openssl: [scripts/certGen.sh](https://github.com/evanx/cryptoserver/blob/master/scripts/certGen.sh)
 
 Then run the test script: [scripts/test.sh](https://github.com/evanx/cryptoserver/blob/master/scripts/test.sh)
 
