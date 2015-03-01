@@ -68,7 +68,7 @@ $ redis-cli redis hget dek:testdek dek:evan:henry
 
 The field `dek:brent:evan` et al is the DEK encrypted using AES with a 256bit key length, and base64 encoded.
 
-It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is "known to no single person" (in clear-text). 
+It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is <i>known to no single person</i> (in clear-text). 
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using `crypto.randomBytes` - see 
 [lib/cryptoFunctions.js](https://github.com/evanx/cryptoserver/blob/master/lib/cryptoFunctions.js) and 
