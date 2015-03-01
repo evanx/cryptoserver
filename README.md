@@ -70,7 +70,7 @@ $ redis-cli redis hget dek:testdek dek:evan:henry
 
 The field `dek:brent:evan` et al is the DEK encrypted using AES with a 256bit key length, and base64 encoded.
 
-It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is <i>known to no single person</i> (in clear-text). 
+It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is <i>"known to no single person"</i> (in clear-text). 
 
 A large number of iterations is used for PBKDF2, to make the hashing operation take much longer. This is a critical defense against brute-force attacks against a compromised encrypted DEK (together with the complexity and length of each custodian's secret e.g. we ensure minimum 12 characters). I have chosen 100k iterations, which takes a few hundred milliseconds. I don't see why this couldn't be even higher for production use, since a second or two is easily tolerable for loading a key e.g. upon a server restart.
 
