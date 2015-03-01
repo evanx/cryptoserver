@@ -1,7 +1,7 @@
 
 var async = require('async');
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: module.filename, level: 'debug'});
+var log = bunyan.createLogger({name: 'test', level: 'debug'});
 var cryptoFunctions = require('../lib/cryptoFunctions');
 var commonFunctions = require('../lib/commonFunctions');
 var appFunctions = require('../lib/appFunctions');
@@ -26,8 +26,8 @@ function test() {
          var cipher = cryptoFunctions.createCipheriv(results.key, results.iv);
          var decipher = cryptoFunctions.createDecipheriv(results.key, results.iv);
          var clearText = "hello, crypto world!";
-         var encrypted = cryptoFunctions.encrypt(cipher, clearText);
-         var decrypted = cryptoFunctions.decrypt(decipher, encrypted);
+         var encrypted = cryptoFunctions.encryptString(cipher, clearText);
+         var decrypted = cryptoFunctions.decryptString(decipher, encrypted);
          log.info('decrypted', typeof decrypted, decrypted.length, decrypted);         
       }
    });

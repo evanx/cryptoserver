@@ -53,16 +53,16 @@ $ redis-cli hkeys dek:testdek
 5) "iv"
 
 $ redis-cli redis hget dek:testdek dek:brent:evan
-"8b4ed0ab35ccf9fdd6da54de34"
+"NAicG0zRVAtJgixc4b8dE8aSOkcdTEmmxgPw/rTRaKY="
 
 $ redis-cli redis hget dek:testdek dek:brent:henry
-"af85a720e662a80ceacd76a318"
+"66EV72S57Ll/DLwLmjqEKiyDpF5zE+zt0lRb1atU/uY="
 
 $ redis-cli redis hget dek:testdek dek:evan:henry
-"3c901b9862be07ee80a66b365f"
+"3OOp5h4Kyo13ZoKbpqfe6d60z1OYakQeMhlXho6vr+g="
 ```
 
-The field `dek:brent:evan` et al is the encrypted DEK using AES with a 256bit key length. It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is "known to no single person" (in clear-text). 
+The field `dek:brent:evan` et al is the DEK encrypted using AES with a 256bit key length, and base64 encoded. It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is "known to no single person" (in clear-text). 
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using `crypto.randomBytes` - see 
 our [lib/cryptoUtils.js](https://github.com/evanx/cryptoserver/blob/master/lib/cryptoUtils.js) and [lib/GenerateKey.js](https://github.com/evanx/cryptoserver/blob/master/lib/GenerateKey.js).
