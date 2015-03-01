@@ -52,9 +52,11 @@ $ redis-cli hkeys dek:testdek
 4) "salt"
 5) "iv"
 
-$ redis-cli redis hget dek:testdek options
-{"saltLength":32,"ivLength":16,"iterationCount":100000,
-   "algorithm":"aes-256-ctr","keyLength":32}
+$ redis-cli redis hget dek:testdek algorithm
+"aes-256-ctr"
+
+$ redis-cli redis hget dek:testdek iterationCount
+"100000"
 
 $ redis-cli redis hget dek:testdek dek:brent:evan
 "NAicG0zRVAtJgixc4b8dE8aSOkcdTEmmxgPw/rTRaKY="
