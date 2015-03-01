@@ -32,7 +32,6 @@ where we have three custodians submitting new secrets for a new key named `testd
 
 Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long. Otherwise the response has a HTTP status code of 500.
 
-
 ```shell
 $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
     --key tmp/certs/brent.key --cert tmp/certs/brent.cert
