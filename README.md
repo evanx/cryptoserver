@@ -65,7 +65,7 @@ $ redis-cli redis hget dek:testdek dek:evan:henry
 The field `dek:brent:evan` et al is the DEK encrypted using AES with a 256bit key length, and base64 encoded. It complies with the PCI DSS as follows. It is encrypted using a KEK that is derived using the <i>split knowledge</i> of two custodians. Two custodians are required to decrypt the key, hence <i>dual control.</i> Clearly the DEK is "known to no single person" (in clear-text). 
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using `crypto.randomBytes` - see 
-our [lib/cryptoFunctions.js](https://github.com/evanx/cryptoserver/blob/master/lib/cryptoFunctions.js) and [lib/GenerateKey.js](https://github.com/evanx/cryptoserver/blob/master/lib/GenerateKey.js).
+our [lib/cryptoFunctions.js](https://github.com/evanx/cryptoserver/blob/master/lib/cryptoFunctions.js) and [lib/generateKey.js](https://github.com/evanx/cryptoserver/blob/master/lib/generateKey.js).
 
 A large number of iterations is used for PBKDF2, to make the hashing operation take much longer. This is a critical defense against brute-force attacks against a compromised encrypted DEK. I have chosen 100k iterations, which takes a few hundred milliseconds. I don't see why this couldn't be even higher for production use, since a second or two is easily tolerable for loading a key e.g. upon a server restart.
 
