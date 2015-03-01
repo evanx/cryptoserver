@@ -30,13 +30,14 @@ POST secret/testdek as brent with data 'bbbbbb'
 
 where we have three custodians submitting new secrets for a new key named `testdek.`
 
-Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long. Otherwise the response's HTTP status code is 500.
+Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long.
 
 ```shell
 $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
     --key tmp/certs/brent.key --cert tmp/certs/brent.cert
 {"message":"insufficient complexity"}
 ```
+where the HTTP status code is 500. 
 
 The following Redis CLI commands show the DEK and its metadata saved in Redis. The DEK is protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2.
 
