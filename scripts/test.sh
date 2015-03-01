@@ -81,8 +81,8 @@ c0clear() {
 
 c0client() {
   c0genkey
-  c0postsecret2
-  return
+  #c0postsecret2
+  #return
   c0postsecret3
   sleep 1 
   c1get key/$keyName  
