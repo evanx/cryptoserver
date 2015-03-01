@@ -46,11 +46,13 @@ $ redis-cli keys 'dek:*'
 1) "dek:testdek"
 
 $ redis-cli hkeys dek:testdek
-1) "dek:brent:henry"
-2) "dek:brent:evan"
-3) "dek:evan:henry"
-4) "salt"
-5) "iv"
+1) "iterationCount"
+2) "algorithm"
+3) "salt"
+4) "iv"
+5) "dek:brent:henry"
+6) "dek:brent:evan"
+7) "dek:evan:henry"
 
 $ redis-cli redis hget dek:testdek algorithm
 "aes-256-ctr"
