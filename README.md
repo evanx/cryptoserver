@@ -11,7 +11,8 @@ Encryption keys are protected by split-knowledge secrets, hashed with PBKDF2, an
 
 See this app's entry point: <a href="https://github.com/evanx/cryptoserver/blob/master/lib/app_cryptoserver.js">lib/app_cryptoserver.js</a>.
 
-This code is not used in production by the author. Do not use without thorough testing and review.
+This side project is developed as an exercise by the author, who does not have a custom requirement for use in production. 
+As such, do not use it yourself in production without thorough testing and review.
 
 
 ### testing 
