@@ -19,7 +19,7 @@ Then run the test script: [scripts/test.sh](https://github.com/evanx/cryptoserve
 
 When the app is running, you can view the URL <a href="https://localhost:8443/help">https://localhost:8443/help</a> in your browser. Actually this should just render this `README.md.` Incidently any request without a client cert, is redirected to `/help.` Since a self-signed server certificate is used, your browser will issue an "unsafe" warning.
 
-The test script uses `curl` to issue the following client-authenticated HTTPS requests to generate a DEK.
+The test script uses `curl` to issue the following client-authenticated HTTPS requests to generate a data-encrypting key (DEK).
 
 ```shell
 GET genkey/testdek/3 as evan
@@ -38,7 +38,7 @@ $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
 {"message":"insufficient complexity"}
 ```
 
-The following Redis CLI commands show the data-encrypting key (DEK) saved in Redis, protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2. For example, the concatenated secret for the `brent:evan` duo is `bbbbbb:eeeeee` in clear-text. 
+The following Redis CLI commands show the DEK and its metadata saved in Redis. The DEK is protected by multiple custodians using split-knowledge secrets. The concatenated clear-text secrets of each duo of custodians is used to derive their key-encrypting key (KEK) using PBKDF2.
 
 ```shell
 $ redis-cli keys 'dek:*'
