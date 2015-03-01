@@ -7,6 +7,7 @@ export SERVER_KEY=tmp/certs/server.key
 export SERVER_CERT=tmp/certs/server.cert
 export CA_CERT=tmp/certs/ca.cert
 export ENV_TYPE=testing
+export SECRET_TIMEOUT_SECS=180
 
 # util methods
 
@@ -80,7 +81,9 @@ c0clear() {
 
 c0client() {
   c0genkey
-  c0postsecret3 
+  c0postsecret2
+  return
+  c0postsecret3
   sleep 1 
   c1get key/$keyName  
   c1get load/$keyName 

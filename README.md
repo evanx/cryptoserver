@@ -80,7 +80,7 @@ To hamper brute-force attacks against a compromised encrypted DEK, we ensure tha
 
 For the key generation procedure for a new DEK, the salt for PBKDF2, the initialisation vector (IV) for AES, and the DEK itself, are generated using `crypto.randomBytes` - see 
 [lib/cryptoFunctions.js](https://github.com/evanx/cryptoserver/blob/master/lib/cryptoFunctions.js) and 
-[lib/generateKey.js](https://github.com/evanx/cryptoserver/blob/master/lib/generateKey.js).
+[lib/genKey.js](https://github.com/evanx/cryptoserver/blob/master/lib/genKey.js).
 
 Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, or indeed any comments, questions etc.
 
