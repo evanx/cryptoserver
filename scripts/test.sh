@@ -67,6 +67,7 @@ c0redisShow() {
   echo; echo '$' redis-cli hkeys "dek:$keyName"
   redis-cli hkeys "dek:$keyName"
   echo; 
+  c1hget options | sed 's/^"\(.*\)"$/\1/'
   c1hget dek:brent:evan
   c1hget dek:brent:henry
   c1hget dek:evan:henry
