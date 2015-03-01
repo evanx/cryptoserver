@@ -67,7 +67,8 @@ c0redisShow() {
   echo; echo '$' redis-cli hkeys "dek:$keyName"
   redis-cli hkeys "dek:$keyName"
   echo; 
-  c1hget options | sed 's/^"\(.*\)"$/\1/'
+  c1hget iterationCount
+  c1hget algorithm
   c1hget dek:brent:evan
   c1hget dek:brent:henry
   c1hget dek:evan:henry
@@ -88,12 +89,12 @@ c0client() {
 
 c0clientTask() {
   out=tmp/client.out
-  sleep .5
+  sleep 1
   c0client > $out
-  sleep .5
+  sleep 1
   echo; echo "## client output"
   cat $out 
-  sleep .5
+  sleep 2
   c0redisShow
 }
 
