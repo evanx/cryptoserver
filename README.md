@@ -4,7 +4,7 @@ We generate a symmetric encryption key protected by a "split knowledge" secret, 
 
 This is a Node.js re-implementation and extension of a previous <a href="https://github.com/evanx/dualcontrol">dualcontrol</a> Java implementation, as discussed in my <a href="https://github.com/evanx/vellum/wiki/DualControl">Dual Control</a> article. 
 
-As of 1 March, the key generation and loading has been implemented and working, but encrypting and decryption data is not yet implemented.
+As of 1 March, the key generation, encryption, storage, and it's decryption and loading has been implemented and is working, but encrypting and decryption data is not yet implemented.
 
 It provides a secure "vault" server with client-authenticated HTTPS access. It uses Redis to store encrypted data and its encryption keys. Encryption keys are protected by split-knowledge secrets, hashed with PBKDF2, and encrypted using AES.
 
