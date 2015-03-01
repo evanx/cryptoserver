@@ -30,7 +30,7 @@ POST secret/testdek as brent with data 'bbbbbb'
 
 where we have three custodians submitting new secrets for a new key named `testdek.`
 
-Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long. Otherwise the response has a HTTP status code of 500.
+Incidently, if we configure for a production environment, then we validate the "password complexity" when custodians submit secrets for key generation. It should contain digits, uppercase, lowercase and punctuation, and be at least 12 characters long. Otherwise the response's HTTP status code is 500.
 
 ```shell
 $ echo bbbbbb | curl -s -k -d @- https://localhost:8443/secret/testdek \
