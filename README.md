@@ -87,7 +87,7 @@ Please report any bugs to <a href="https://twitter.com/evanxsummers">@evanxsumme
 
 ## Other resources
 
-See the companion project: https://github.com/evanx/cryptoserver
+See the companion project: https://github.com/evanx/authserver
 
 Wiki home: https://github.com/evanx/vellum/wiki
 
