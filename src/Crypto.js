@@ -1,11 +1,7 @@
 
 var crypto = require('crypto');
-var async = require('async');
-var bunyan = require('bunyan');
 
 var Common = require('./Common');
-
-var log = bunyan.createLogger({name: 'Crypto', level: 'debug'});
 
 function create() {
    var that = {};
