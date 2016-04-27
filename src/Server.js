@@ -1,43 +1,40 @@
 
 var fs = require('fs');
 var async = require('async');
-var S = require('string');
-var _ = require('lodash');
+var lodash = require('lodash');
 var express = require('express');
 var app = express();
 var https = require('https');
 var bodyParser = require('body-parser')
 var concat = require('concat-stream');
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "cryptoserver"});
 var marked = require('marked');
 var crypto = require('crypto');
 
-var cryptoFunctions = require('./cryptoFunctions');
-var commonFunctions = require('./commonFunctions');
-var appFunctions = require('./appFunctions');
+var Crypto = require('./Crypto');
+var Common = require('./Common');
 var genKey = require('./genKey');
 var loadKey = require('./loadKey');
 var keySecretsStore = require('./keySecretsStore');
 var keyStore = require('./keyStore');
 var encryptHandler = require('./encryptHandler');
 
+var logger = bunyan.createLogger({name: "cryptoserver"});
 var redis = require('redis');
 
 global.cryptoserver = exports;
 
-exports.isProduction = (process.env.ENV_TYPE.toLowerCase().indexOf('prod') === 0);
-exports.log = log;
+exports.logger = logger;
 exports.redisClient = redis.createClient();
 
 exports.redisClient.on('error', function (err) {
-   log.error('error', err);
+   logger.error('error', err);
 });
 
 function handleError(res, error) {
-   log.error('error', error);
+   logger.error('error', error);
    if (error instanceof Error) {
-      log.error('error stack', error.stack);
+      logger.error('error stack', error.stack);
    }
    res.status(500).send(error);
 }
@@ -71,7 +68,7 @@ function handleGetKeyInfo(req, res) {
             responseData.error = 'empty';
             res.status(500);
          }
-         log.info('reply', redisKey, responseData);
+         logger.info('reply', redisKey, responseData);
          res.json(responseData);
       });
    } catch (error) {
@@ -94,7 +91,7 @@ function handleGetGenKey(req, res) {
          reqUrl: req.url
       };
       exports.redisClient.hkeys(redisKey, function (err, reply) {
-         log.info('hkeys', typeof reply, Array.isArray(reply));
+         logger.info('hkeys', typeof reply, Array.isArray(reply));
          if (err) {
             responseData.error = err;
             res.status(500);
@@ -105,7 +102,7 @@ function handleGetGenKey(req, res) {
          } else {
             keySecretsStore.put(user, keyName, 'genKey', custodianCount);
          }
-         log.info('reply', responseData);
+         logger.info('reply', responseData);
          res.json(responseData);
       });
    } catch (error) {
@@ -123,7 +120,7 @@ function handleGetLoadKey(req, res) {
          reqUrl: req.url
       };
       exports.redisClient.hkeys(redisKey, function (err, reply) {
-         log.info('hkeys', typeof reply, Array.isArray(reply));
+         logger.info('hkeys', typeof reply, Array.isArray(reply));
          if (err) {
             responseData.error = err;
             res.status(500);
@@ -133,7 +130,7 @@ function handleGetLoadKey(req, res) {
          } else {
             keySecretsStore.put(user, keyName, 'loadKey');
          }
-         log.info('reply', responseData);
+         logger.info('reply', responseData);
          res.json(responseData);
       });
    } catch (error) {
@@ -167,9 +164,9 @@ function validateSecretComplexity(secret) {
 function performGenKey(user, keyName, keySecrets) {
    genKey(exports, keySecrets, function (err) {
       if (err) {
-         log.error('genKey error', err);
+         logger.error('genKey error', err);
       } else {
-         log.info('genKey ok', keyName);
+         logger.info('genKey ok', keyName);
          keySecretsStore.clear(user, keyName);
       }
    });
@@ -178,9 +175,9 @@ function performGenKey(user, keyName, keySecrets) {
 function performLoadKey(user, keyName, keySecrets) {
    loadKey(exports, keySecrets, function (err, dek) {
       if (err) {
-         log.error('loadKey error', err);
+         logger.error('loadKey error', err);
       } else {
-         log.info('loadKey ok', keyName, dek.length);
+         logger.info('loadKey ok', keyName, dek.length);
          keySecretsStore.clear(user, keyName);
          keyStore.put(user, keyName, dek);
       }
@@ -192,10 +189,11 @@ function handlePostSecret(req, res) {
       var user = req.peerCN;
       var keyName = req.params.keyName;
       var secret = req.body;
-      log.info('receive secret', user);
-      if (exports.isProduction) {
+      var command = 'genKey'; // TODO
+      logger.info('receive secret', user);
+      if (process.env.NODE_ENV === 'production') {
          if (!validateSecretComplexity(secret)) {
-            if (keySecrets.command === 'genKey') {
+            if (command === 'genKey') {
                throw {message: 'insufficient complexity'};
             }
          }
@@ -211,7 +209,7 @@ function handlePostSecret(req, res) {
          secretCount: Object.keys(keySecrets.secrets).length,
          reqUrl: req.url
       };
-      log.info('reply', responseData);
+      logger.info('reply', responseData);
       res.send(responseData);
       if (keySecrets.command === 'genKey') {
          if (Object.keys(keySecrets.secrets).length === keySecrets.custodianCount) {
@@ -231,7 +229,7 @@ function handlePostEncrypt(req, res) {
    try {
       var keyName = req.params.keyName;
       var user = req.peerCN;
-      log.info('receive encrypt', user, keyName);
+      logger.info('receive encrypt', user, keyName);
       var datum = req.body;
       var responseData = {
          keyName: keyName,
@@ -244,12 +242,12 @@ function handlePostEncrypt(req, res) {
 }
 
 function appLogger(req, res, next) {
-   log.info('app', req.url);
+   logger.info('app', req.url);
    next();
 }
 
 function authorise(req, res, next) {
-   log.info('authorise', req.url, req.peerCN);
+   logger.info('authorise', req.url, req.peerCN);
    if (req.url === '/help') {
       next();
    } else if (!req.peerCN) {
@@ -269,7 +267,7 @@ function authenticate(req, res, next) {
    } else {
       var cert = req.socket.getPeerCertificate();
       req.peerCN = cert.subject.CN;
-      log.info('authenticate', req.url, cert.subject.CN, cert.issuer);
+      logger.info('authenticate', req.url, cert.subject.CN, cert.issuer);
       next();
    }
 }
@@ -282,7 +280,7 @@ function dechunk(req, res, next) {
 }
 
 function monitor() {
-   log.debug('monitor');
+   logger.debug('monitor');
    keySecretsStore.monitor();
 }
 
@@ -313,7 +311,7 @@ function start(env) {
    app.post('/secret/:keyName', handlePostSecret);
    app.post('/encrypt/:keyName', handlePostEncrypt);
    https.createServer(options, app).listen(env.APP_PORT);
-   log.info('start', env.APP_PORT, env.ENV_TYPE);
+   logger.info('start', env.APP_PORT, env.ENV_TYPE);
    setInterval(monitor, exports.monitorIntervalSeconds * 1000);
 }
 
@@ -332,10 +330,9 @@ function validateEnv(env) {
       if (!value) {
          throw new Error("missing env: " + envName);
       }
-      log.info('env', envName, value);
+      logger.info('env', envName, value);
    });
 }
 
 validateEnv(process.env);
 start(process.env);
-

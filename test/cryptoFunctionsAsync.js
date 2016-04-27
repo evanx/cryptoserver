@@ -2,9 +2,11 @@
 var async = require('async');
 var crypto = require('crypto');
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "cryptoserver", level: 'debug'});
-var commonFunctions = require('../lib/commonFunctions');
-var cryptoFunctions = require('../lib/cryptoFunctions');
+
+var Common = require('../lib/Common');
+var Crypto = require('../lib/Crypto');
+
+var logger = bunyan.createLogger({name: "cryptoserver", level: 'debug'});
 
 exports.create = function (options) {
    var results = {};
@@ -50,5 +52,3 @@ exports.create = function (options) {
    };
    return functions;
 }
-
-

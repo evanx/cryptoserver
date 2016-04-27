@@ -17,7 +17,7 @@ c1removeprot() {
 
 c1genrsa() {
   cn="$1"
-  subj="/CN=$cn/O=ngena.com" 
+  subj="/CN=$cn/O=evanx.github.io" 
   rm -f $cn.*
   openssl genrsa -des3 -out $cn.key -passout "$pass" 2048
   c1removeprot $cn

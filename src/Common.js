@@ -1,16 +1,17 @@
 
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "cryptoserver"});
 var now = require('performance-now');
+
+var logger = bunyan.createLogger({name: "cryptoserver"});
 
 module.exports = {
    createReplyLogger: function () {
       var message = Array.prototype.slice.call(arguments).join(' ');
       return function (err, reply) {
          if (err) {
-            log.warn(message, err);
+            logger.warn(message, err);
          } else {
-            log.info(message, reply);
+            logger.info(message, reply);
          }
       };
    },
@@ -18,7 +19,7 @@ module.exports = {
       var start = now();
       return function (err, result) {
          var duration = Math.round(now() - start);
-         log.info(name, duration);
+         logger.info(name, duration);
          callback(err, result);
       };
    },
@@ -33,4 +34,3 @@ module.exports = {
       };
    }
 };
-

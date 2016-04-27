@@ -1,9 +1,10 @@
 
-var commonFunctions = require('./commonFunctions');
-var cryptoFunctions = require('./cryptoFunctions');
 var async = require('async');
 var bunyan = require('bunyan');
 var bufferEquals = require('buffer-equal');
+
+var Common = require('./Common');
+var Crypto = require('./Crypto');
 
 module.exports = function (cryptoserver, keySecrets, done) {
    var that = {};
@@ -15,53 +16,53 @@ module.exports = function (cryptoserver, keySecrets, done) {
    that.users.sort();
    that.encryptedItems = [];
 
-   var log = bunyan.createLogger({name: 'cryptoserver.genKey.' + that.keyName, level: 'debug'});
+   var logger = bunyan.createLogger({name: 'cryptoserver.genKey.' + that.keyName, level: 'debug'});
 
    function save() {
       var multi = that.cryptoserver.redisClient.multi();
-      multi.hset(that.redisKey, 'iterationCount', cryptoFunctions.options.iterationCount);
+      multi.hset(that.redisKey, 'iterationCount', Crypto.options.iterationCount);
       multi.hset(that.redisKey, 'salt', that.salt.toString('base64'));
-      multi.hset(that.redisKey, 'algorithm', cryptoFunctions.options.algorithm);
+      multi.hset(that.redisKey, 'algorithm', Crypto.options.algorithm);
       multi.hset(that.redisKey, 'iv', that.iv.toString('base64'));
-      log.info('redis multi exec', that.encryptedItems.length);
+      logger.info('redis multi exec', that.encryptedItems.length);
       that.encryptedItems.forEach(function (encryptedItem) {
          var redisField = 'dek:' + encryptedItem.duo.join(':');
          multi.hset(that.redisKey, redisField, encryptedItem.encryptedDek.toString('base64'));
-         log.debug('hset', redisField);
+         logger.debug('hset', redisField);
       });
       multi.exec(function (err, replies) {
          if (err) {
-            log.error('redis multi exec error', err);
+            logger.error('redis multi exec error', err);
             done(err);
          } else {
-            log.info('redis multi exec done', replies.length);
+            logger.info('redis multi exec done', replies.length);
             done();
          }
       });
    }
 
    function encryptDuoKek(duo, kek) {
-      var cipher = cryptoFunctions.createCipheriv(kek, that.iv);
-      var encryptedDek = cryptoFunctions.encryptBuffer(cipher, that.generatedDek);
+      var cipher = Crypto.createCipheriv(kek, that.iv);
+      var encryptedDek = Crypto.encryptBuffer(cipher, that.generatedDek);
       that.encryptedItems.push({
          duo: duo,
          encryptedDek: encryptedDek
       });
-      var decipher = cryptoFunctions.createDecipheriv(kek, that.iv);
-      var decryptedDek = cryptoFunctions.decryptBuffer(decipher, encryptedDek);
-      log.debug('decryptedDek', duo, decryptedDek.length, that.generatedDek.length);
+      var decipher = Crypto.createDecipheriv(kek, that.iv);
+      var decryptedDek = Crypto.decryptBuffer(decipher, encryptedDek);
+      logger.debug('decryptedDek', duo, decryptedDek.length, that.generatedDek.length);
       if (!bufferEquals(decryptedDek, that.generatedDek)) {
          throw {message: 'encryption verification failed'};
       }
-      log.info('verified', duo, Object.keys(that.encryptedItems).length);
+      logger.info('verified', duo, Object.keys(that.encryptedItems).length);
    }
 
    function encryptDuoTask(duo, clearSecret) {
       return function (callback) {
-         log.info('encryptDuoTask', duo);
-         cryptoFunctions.pbkdf2(clearSecret, that.salt, function (err, kek) {
+         logger.info('encryptDuoTask', duo);
+         Crypto.pbkdf2(clearSecret, that.salt, function (err, kek) {
             if (err) {
-               log.error('pbkdf2 error', duo, err);
+               logger.error('pbkdf2 error', duo, err);
                callback(err);
             } else {
                encryptDuoKek(duo, kek);
@@ -72,7 +73,7 @@ module.exports = function (cryptoserver, keySecrets, done) {
    }
 
    function genKeyUsers() {
-      log.info('genKeyUsers', that.users, that.salt.length, that.iv.length);
+      logger.info('genKeyUsers', that.users, that.salt.length, that.iv.length);
       var tasks = [];
       for (var i = 0; i < that.users.length; i++) {
          for (var j = 0; j < that.users.length; j++) {
@@ -85,7 +86,7 @@ module.exports = function (cryptoserver, keySecrets, done) {
       }
       async.parallel(tasks, function (err) {
          if (err) {
-            log.info('genKeyUsers error', err);
+            logger.info('genKeyUsers error', err);
             done(err);
          } else {
             save();
@@ -94,13 +95,13 @@ module.exports = function (cryptoserver, keySecrets, done) {
    }
 
    function genKey() {
-      cryptoFunctions.randomKey(function (err, generatedDek) {
+      Crypto.randomKey(function (err, generatedDek) {
          if (err) {
-            log.info('genKey error', that.users);
+            logger.info('genKey error', that.users);
             done(err);
          } else {
             that.generatedDek = generatedDek;
-            log.debug('generatedDek', that.generatedDek.length);
+            logger.debug('generatedDek', that.generatedDek.length);
             genKeyUsers();
          }
       });
@@ -109,24 +110,24 @@ module.exports = function (cryptoserver, keySecrets, done) {
    function generate() {
       async.parallel([
          function (callback) {
-            cryptoFunctions.randomSalt(function (err, salt) {
+            Crypto.randomSalt(function (err, salt) {
                if (err) {
-                  log.error('salt error', err);
+                  logger.error('salt error', err);
                   callback(err);
                } else {
                   that.salt = salt;
-                  log.info('salt', salt.length);
+                  logger.info('salt', salt.length);
                   callback(null, salt);
                }
             })
          },
          function (callback) {
-            cryptoFunctions.randomIv(function (err, iv) {
+            Crypto.randomIv(function (err, iv) {
                if (err) {
-                  log.error('iv error', err);
+                  logger.error('iv error', err);
                   callback(err);
                } else {
-                  log.info('iv', iv.length);
+                  logger.info('iv', iv.length);
                   that.iv = iv;
                   callback(null, iv);
                }
@@ -141,17 +142,17 @@ module.exports = function (cryptoserver, keySecrets, done) {
       });
    }
 
-   log.info('genKey', that.users, that.redisKey);
+   logger.info('genKey', that.users, that.redisKey);
    try {
       that.cryptoserver.redisClient.exists(that.redisKey, function (err, exists) {
          if (err) {
-            log.error('redis error', err);
+            logger.error('redis error', err);
             done(err);
          } else if (exists) {
             err = 'already exists';
             done(err);
          } else {
-            log.info('genKey', that.redisKey);
+            logger.info('genKey', that.redisKey);
             generate(function (err) {
                if (err) {
                   done(err);
@@ -163,7 +164,6 @@ module.exports = function (cryptoserver, keySecrets, done) {
          }
       });
    } catch (error) {
-      log.error('genKey', error);
+      logger.error('genKey', error);
    }
 };
-

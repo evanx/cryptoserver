@@ -2,8 +2,10 @@
 var crypto = require('crypto');
 var async = require('async');
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "cryptoserver.cryptoFunctions", level: 'debug'});
-var commonFunctions = require('./commonFunctions');
+
+var Common = require('./Common');
+
+var log = bunyan.createLogger({name: 'Crypto', level: 'debug'});
 
 function create() {
    var that = {};
@@ -26,7 +28,7 @@ function create() {
    };
    that.pbkdf2 = function (secret, salt, callback) {
       crypto.pbkdf2(secret, salt, options.iterationCount, options.keyLength,
-              commonFunctions.callbackTimer('pbkdf2 timer', callback));
+              Common.callbackTimer('pbkdf2 timer', callback));
    };
    that.createCipheriv = function (key, iv) {
       return crypto.createCipheriv(options.algorithm, key, iv);
@@ -51,4 +53,3 @@ function create() {
 
 
 module.exports = create();
-

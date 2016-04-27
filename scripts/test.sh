@@ -109,7 +109,7 @@ c0default() {
   c0kill
   c0clear
   c0clientTask & 
-    nodejs lib/app_cryptoserver.js | bunyan -o short
+    node index.js | node_modules/.bin/bunyan -o short
 }
 
 if [ $# -gt 0 ]

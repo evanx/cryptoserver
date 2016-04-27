@@ -1,14 +1,15 @@
 
 
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "cryptoserver.keyStore"});
+
+var logger = bunyan.createLogger({name: "cryptoserver.keyStore"});
 
 var keyItems = {};
 
 function createInstance() {
    var that = {
       put: function (user, keyName, key) {
-         log.info('put', keyName);
+         logger.info('put', keyName);
          keyItems[keyName] = {
             timestamp: new Date().getTime(),
             keyName: keyName,
