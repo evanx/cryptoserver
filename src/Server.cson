@@ -1,0 +1,32 @@
+spec: 'evanx/component#0.1.2'
+
+config:
+   serviceName:
+      type: 'string'
+   serviceLabel:
+      type: 'string'
+   redisUrl:
+      type: 'string'
+   redisKeyspace:
+      type: 'string'
+   hostname:
+      type: 'string'
+   location:
+      defaultValue: '/'
+   port:
+      defaultValue: 8080
+   adminLimit:
+      defaultValue: 2000
+      type: 'duration'
+      unit: 'millis'
+      max: 9000
+   secretTimeoutSeconds:
+      defaultValue: 120
+   monitorIntervalSeconds:
+      defaultValue: 60
+   caCert:
+      type: 'file'
+   serverCert:
+      type: 'file'
+   serverKey:
+      type: 'file'

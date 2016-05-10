@@ -3,11 +3,12 @@
 # enviroment
 
 c1start() {
-  cs_PORT=8443 \
-  cs_SERVER_KEY=tmp/certs/server.key \
-  cs_SERVER_CERT=tmp/certs/server.cert \
-  cs_CA_CERT=tmp/certs/ca.cert \
-  cs_SECRET_TIMEOUT_SECS=180 \
+  Server_PORT=8443 \
+  Server_serverKey=tmp/certs/server.key \
+  Server_serverCert=tmp/certs/server.cert \
+  Server_caCert=tmp/certs/ca.cert \
+  Server_secretTimeoutSeconds=180 \
+  configModule=./config/demo
   NODE_ENV=testing \
   npm start | node_modules/.bin/bunyan -o keyspace
 }
@@ -18,7 +19,7 @@ c2get() {
   uri=$1
   user=$2
   echo "GET $uri as $user"
-  curl -s -k https://localhost:8443/$uri --key tmp/certs/$user.key --cert tmp/certs/$user.cert 
+  curl -s -k https://localhost:8443/$uri --key tmp/certs/$user.key --cert tmp/certs/$user.cert
   echo " (exitCode $?)"
 }
 
@@ -37,7 +38,7 @@ c3post() {
 
 c1info() {
   keyName=$1
-  c1get key/$keyName 
+  c1get key/$keyName
 }
 
 # keyName context
@@ -61,7 +62,7 @@ c0genkey() {
 
 c1hget() {
   hkey=$1
-  echo; echo '$' redis-cli redis hget dek:$keyName $hkey 
+  echo; echo '$' redis-cli redis hget dek:$keyName $hkey
   redis-cli hget dek:$keyName $hkey
 }
 
@@ -70,7 +71,7 @@ c0redisShow() {
   redis-cli keys 'dek:*'
   echo; echo '$' redis-cli hkeys "dek:$keyName"
   redis-cli hkeys "dek:$keyName"
-  echo; 
+  echo;
   c1hget iterationCount
   c1hget algorithm
   c1hget dek:brent:evan
@@ -87,9 +88,9 @@ c0client() {
   #c0postsecret2
   #return
   c0postsecret3
-  sleep 1 
-  c1get key/$keyName  
-  c1get load/$keyName 
+  sleep 1
+  c1get key/$keyName
+  c1get load/$keyName
   c0postsecret2
 }
 
@@ -99,7 +100,7 @@ c0clientTask() {
   c0client > $out
   sleep 1
   echo; echo "## client output"
-  cat $out 
+  cat $out
   sleep 2
   c0redisShow
 }
@@ -111,8 +112,8 @@ c0kill() {
 c0default() {
   c0kill
   c0clear
-  c0clientTask & 
-    c0start | node_modules/.bin/bunyan -o short
+  c0clientTask &
+    c1start demo | node_modules/.bin/bunyan -o short
 }
 
 if [ $# -gt 0 ]
@@ -123,7 +124,3 @@ then
 else
   c0default
 fi
-
-
-
-

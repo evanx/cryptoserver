@@ -19,7 +19,6 @@ const keySecretsStore = require('./keySecretsStore');
 const keyStore = require('./keyStore');
 const encryptHandler = require('./encryptHandler');
 
-const logger = bunyan.createLogger({name: "cryptoserver"});
 const redis = require('redis');
 
 global.cryptoserver = exports;
@@ -31,31 +30,22 @@ exports.redisClient.on('error', function (err) {
    logger.error('error', err);
 });
 
-exports.envNames = [
-   'CA_CERT',
-   'SERVER_CERT',
-   'SERVER_KEY',
-   'NODE_ENV',
-   'PORT',
-   'SECRET_TIMEOUT_SECS'
-];
-
 function start() {
    const env = process.env;
    validateEnv(env);
    exports.secretTimeoutSeconds = 120;
-   if (env.SECRET_TIMEOUT_SECS) {
-      exports.secretTimeoutSeconds = parseInt(env.SECRET_TIMEOUT_SECS);
+   if (env.Server_secretTimeoutSeconds) {
+      exports.secretTimeoutSeconds = parseInt(env.Server_secretTimeoutSeconds);
    }
    keySecretsStore.init({secretTimeoutSeconds: exports.secretTimeoutSeconds});
    exports.monitorIntervalSeconds = 60;
-   if (env.MONITOR_INTERVAL_SECONDS) {
-      exports.monitorIntervalSeconds = parseInt(env.MONITOR_INTERVAL_SECONDS);
+   if (env.Server_monitorIntervalSeconds) {
+      exports.monitorIntervalSeconds = parseInt(env.Server_monitorIntervalSeconds);
    }
    const options = {
-      ca: fs.readFileSync(env.CA_CERT),
-      key: fs.readFileSync(env.SERVER_KEY),
-      cert: fs.readFileSync(env.SERVER_CERT),
+      ca: fs.readFileSync(env.Server_caCert),
+      key: fs.readFileSync(env.Server_serverKey),
+         cert: fs.readFileSync(env.Server_serverCert),
       requestCert: true
    };
    app.use(appLogger);
@@ -68,19 +58,9 @@ function start() {
    app.use(dechunk);
    app.post('/secret/:keyName', handlePostSecret);
    app.post('/encrypt/:keyName', handlePostEncrypt);
-   https.createServer(options, app).listen(env.PORT);
-   logger.info('start', env.PORT, env.NODE_ENV);
+   https.createServer(options, app).listen(env.Server_port);
+   logger.info('start', env.Server_port, env.NODE_ENV);
    setInterval(monitor, exports.monitorIntervalSeconds * 1000);
-}
-
-function validateEnv(env) {
-   exports.envNames.forEach(function (envName) {
-      const value = process.env[envName];
-      if (!value) {
-         throw new Error("missing env: " + envName);
-      }
-      logger.info('env', envName, value);
-   });
 }
 
 function dechunk(req, res, next) {
