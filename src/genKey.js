@@ -1,13 +1,13 @@
 
-var async = require('async');
-var bunyan = require('bunyan');
-var bufferEquals = require('buffer-equal');
+const async = require('async');
+const bunyan = require('bunyan');
+const bufferEquals = require('buffer-equal');
 
-var Common = require('./Common');
-var Crypto = require('./Crypto');
+const Common = require('./Common');
+const Crypto = require('./Crypto');
 
 module.exports = function (cryptoserver, keySecrets, done) {
-   var that = {};
+   const that = {};
    that.cryptoserver = cryptoserver;
    that.keyName = keySecrets.keyName;
    that.redisKey = 'dek:' + keySecrets.keyName;
@@ -16,17 +16,17 @@ module.exports = function (cryptoserver, keySecrets, done) {
    that.users.sort();
    that.encryptedItems = [];
 
-   var logger = bunyan.createLogger({name: 'cryptoserver.genKey.' + that.keyName, level: 'debug'});
+   const logger = bunyan.createLogger({name: 'cryptoserver.genKey.' + that.keyName, level: 'debug'});
 
    function save() {
-      var multi = that.cryptoserver.redisClient.multi();
+      const multi = that.cryptoserver.redisClient.multi();
       multi.hset(that.redisKey, 'iterationCount', Crypto.options.iterationCount);
       multi.hset(that.redisKey, 'salt', that.salt.toString('base64'));
       multi.hset(that.redisKey, 'algorithm', Crypto.options.algorithm);
       multi.hset(that.redisKey, 'iv', that.iv.toString('base64'));
       logger.info('redis multi exec', that.encryptedItems.length);
       that.encryptedItems.forEach(function (encryptedItem) {
-         var redisField = 'dek:' + encryptedItem.duo.join(':');
+         const redisField = 'dek:' + encryptedItem.duo.join(':');
          multi.hset(that.redisKey, redisField, encryptedItem.encryptedDek.toString('base64'));
          logger.debug('hset', redisField);
       });
@@ -42,14 +42,14 @@ module.exports = function (cryptoserver, keySecrets, done) {
    }
 
    function encryptDuoKek(duo, kek) {
-      var cipher = Crypto.createCipheriv(kek, that.iv);
-      var encryptedDek = Crypto.encryptBuffer(cipher, that.generatedDek);
+      const cipher = Crypto.createCipheriv(kek, that.iv);
+      const encryptedDek = Crypto.encryptBuffer(cipher, that.generatedDek);
       that.encryptedItems.push({
          duo: duo,
          encryptedDek: encryptedDek
       });
-      var decipher = Crypto.createDecipheriv(kek, that.iv);
-      var decryptedDek = Crypto.decryptBuffer(decipher, encryptedDek);
+      const decipher = Crypto.createDecipheriv(kek, that.iv);
+      const decryptedDek = Crypto.decryptBuffer(decipher, encryptedDek);
       logger.debug('decryptedDek', duo, decryptedDek.length, that.generatedDek.length);
       if (!bufferEquals(decryptedDek, that.generatedDek)) {
          throw {message: 'encryption verification failed'};
@@ -74,12 +74,12 @@ module.exports = function (cryptoserver, keySecrets, done) {
 
    function genKeyUsers() {
       logger.info('genKeyUsers', that.users, that.salt.length, that.iv.length);
-      var tasks = [];
+      const tasks = [];
       that.users.forEach(function (user0) {
          that.users.forEach(function (user1) {
             if (user0 < user1) {
-               var duo = [user0, user1];
-               var clearSecret = that.secrets[user0] + ':' + that.secrets[user1];
+               const duo = [user0, user1];
+               const clearSecret = that.secrets[user0] + ':' + that.secrets[user1];
                tasks.push(encryptDuoTask(duo, clearSecret));
             }
          });

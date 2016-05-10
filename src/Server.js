@@ -1,26 +1,26 @@
 
-var fs = require('fs');
-var async = require('async');
-var lodash = require('lodash');
-var express = require('express');
-var app = express();
-var https = require('https');
-var bodyParser = require('body-parser')
-var concat = require('concat-stream');
-var bunyan = require('bunyan');
-var marked = require('marked');
-var crypto = require('crypto');
+const fs = require('fs');
+const async = require('async');
+const lodash = require('lodash');
+const express = require('express');
+const app = express();
+const https = require('https');
+const bodyParser = require('body-parser')
+const concat = require('concat-stream');
+const bunyan = require('bunyan');
+const marked = require('marked');
+const crypto = require('crypto');
 
-var Crypto = require('./Crypto');
-var Common = require('./Common');
-var genKey = require('./genKey');
-var loadKey = require('./loadKey');
-var keySecretsStore = require('./keySecretsStore');
-var keyStore = require('./keyStore');
-var encryptHandler = require('./encryptHandler');
+const Crypto = require('./Crypto');
+const Common = require('./Common');
+const genKey = require('./genKey');
+const loadKey = require('./loadKey');
+const keySecretsStore = require('./keySecretsStore');
+const keyStore = require('./keyStore');
+const encryptHandler = require('./encryptHandler');
 
-var logger = bunyan.createLogger({name: "cryptoserver"});
-var redis = require('redis');
+const logger = bunyan.createLogger({name: "cryptoserver"});
+const redis = require('redis');
 
 global.cryptoserver = exports;
 
@@ -30,6 +30,101 @@ exports.redisClient = redis.createClient();
 exports.redisClient.on('error', function (err) {
    logger.error('error', err);
 });
+
+exports.envNames = [
+   'CA_CERT',
+   'SERVER_CERT',
+   'SERVER_KEY',
+   'NODE_ENV',
+   'PORT',
+   'SECRET_TIMEOUT_SECS'
+];
+
+function start() {
+   const env = process.env;
+   validateEnv(env);
+   exports.secretTimeoutSeconds = 120;
+   if (env.SECRET_TIMEOUT_SECS) {
+      exports.secretTimeoutSeconds = parseInt(env.SECRET_TIMEOUT_SECS);
+   }
+   keySecretsStore.init({secretTimeoutSeconds: exports.secretTimeoutSeconds});
+   exports.monitorIntervalSeconds = 60;
+   if (env.MONITOR_INTERVAL_SECONDS) {
+      exports.monitorIntervalSeconds = parseInt(env.MONITOR_INTERVAL_SECONDS);
+   }
+   const options = {
+      ca: fs.readFileSync(env.CA_CERT),
+      key: fs.readFileSync(env.SERVER_KEY),
+      cert: fs.readFileSync(env.SERVER_CERT),
+      requestCert: true
+   };
+   app.use(appLogger);
+   app.use(authenticate);
+   app.use(authorise);
+   app.get('/help', handleGetHelp);
+   app.get('/genkey/:keyName/:count', handleGetGenKey);
+   app.get('/key/:keyName', handleGetKeyInfo);
+   app.get('/load/:keyName', handleGetLoadKey);
+   app.use(dechunk);
+   app.post('/secret/:keyName', handlePostSecret);
+   app.post('/encrypt/:keyName', handlePostEncrypt);
+   https.createServer(options, app).listen(env.PORT);
+   logger.info('start', env.PORT, env.NODE_ENV);
+   setInterval(monitor, exports.monitorIntervalSeconds * 1000);
+}
+
+function validateEnv(env) {
+   exports.envNames.forEach(function (envName) {
+      const value = process.env[envName];
+      if (!value) {
+         throw new Error("missing env: " + envName);
+      }
+      logger.info('env', envName, value);
+   });
+}
+
+function dechunk(req, res, next) {
+   req.pipe(concat(function (content) {
+      req.body = content;
+      next();
+   }));
+}
+
+function appLogger(req, res, next) {
+   logger.info('app', req.url);
+   next();
+}
+
+function authorise(req, res, next) {
+   logger.info('authorise', req.url, req.peerCN);
+   if (req.url === '/help') {
+      next();
+   } else if (!req.peerCN) {
+      throw {message: 'not authorized'};
+   } else {
+      next();
+   }
+}
+
+function authenticate(req, res, next) {
+   if (!res.socket.authorized) {
+      if (req.url === '/help') {
+         next();
+      } else {
+         res.redirect('/help');
+      }
+   } else {
+      const cert = req.socket.getPeerCertificate();
+      req.peerCN = cert.subject.CN;
+      logger.info('authenticate', req.url, cert.subject.CN, cert.issuer);
+      next();
+   }
+}
+
+function monitor() {
+   logger.debug('monitor');
+   keySecretsStore.monitor();
+}
 
 function handleError(res, error) {
    logger.error('error', error);
@@ -49,11 +144,11 @@ function handleGet(req, res) {
 
 function handleGetKeyInfo(req, res) {
    try {
-      var user = req.peerCN;
-      var keyName = req.params.keyName;
-      var redisKey = 'dek:' + keyName;
+      const user = req.peerCN;
+      const keyName = req.params.keyName;
+      const redisKey = 'dek:' + keyName;
       exports.redisClient.hkeys(redisKey, function (err, reply) {
-         var responseData = {
+         const responseData = {
             keyName: keyName,
             reqUrl: req.url
          };
@@ -78,14 +173,14 @@ function handleGetKeyInfo(req, res) {
 
 function handleGetGenKey(req, res) {
    try {
-      var user = req.peerCN;
-      var keyName = req.params.keyName;
-      var redisKey = 'dek:' + keyName;
-      var custodianCount = parseInt(req.params.count);
+      const user = req.peerCN;
+      const keyName = req.params.keyName;
+      const redisKey = 'dek:' + keyName;
+      const custodianCount = parseInt(req.params.count);
       if (custodianCount < 2 || custodianCount > 5) {
          throw {message: 'invalid custodian count'};
       }
-      var responseData = {
+      const responseData = {
          keyName: keyName,
          custodianCount: custodianCount,
          reqUrl: req.url
@@ -112,10 +207,10 @@ function handleGetGenKey(req, res) {
 
 function handleGetLoadKey(req, res) {
    try {
-      var user = req.peerCN;
-      var keyName = req.params.keyName;
-      var redisKey = 'dek:' + keyName;
-      var responseData = {
+      const user = req.peerCN;
+      const keyName = req.params.keyName;
+      const redisKey = 'dek:' + keyName;
+      const responseData = {
          keyName: keyName,
          reqUrl: req.url
       };
@@ -186,10 +281,10 @@ function performLoadKey(user, keyName, keySecrets) {
 
 function handlePostSecret(req, res) {
    try {
-      var user = req.peerCN;
-      var keyName = req.params.keyName;
-      var secret = req.body;
-      var command = 'genKey'; // TODO
+      const user = req.peerCN;
+      const keyName = req.params.keyName;
+      const secret = req.body;
+      const command = 'genKey'; // TODO
       logger.info('receive secret', user);
       if (process.env.NODE_ENV === 'production') {
          if (!validateSecretComplexity(secret)) {
@@ -198,11 +293,11 @@ function handlePostSecret(req, res) {
             }
          }
       }
-      var keySecrets = keySecretsStore.setSecret(user, keyName, secret);
+      const keySecrets = keySecretsStore.setSecret(user, keyName, secret);
       if (!keySecrets) {
          throw {message: 'no command'};
       }
-      var responseData = {
+      const responseData = {
          keyName: keyName,
          user: user,
          custodianCount: keySecrets.custodianCount,
@@ -227,11 +322,11 @@ function handlePostSecret(req, res) {
 
 function handlePostEncrypt(req, res) {
    try {
-      var keyName = req.params.keyName;
-      var user = req.peerCN;
+      const keyName = req.params.keyName;
+      const user = req.peerCN;
       logger.info('receive encrypt', user, keyName);
-      var datum = req.body;
-      var responseData = {
+      const datum = req.body;
+      const responseData = {
          keyName: keyName,
          reqUrl: req.url
       };
@@ -240,99 +335,3 @@ function handlePostEncrypt(req, res) {
       handleError(res, error);
    }
 }
-
-function appLogger(req, res, next) {
-   logger.info('app', req.url);
-   next();
-}
-
-function authorise(req, res, next) {
-   logger.info('authorise', req.url, req.peerCN);
-   if (req.url === '/help') {
-      next();
-   } else if (!req.peerCN) {
-      throw {message: 'not authorized'};
-   } else {
-      next();
-   }
-}
-
-function authenticate(req, res, next) {
-   if (!res.socket.authorized) {
-      if (req.url === '/help') {
-         next();
-      } else {
-         res.redirect('/help');
-      }
-   } else {
-      var cert = req.socket.getPeerCertificate();
-      req.peerCN = cert.subject.CN;
-      logger.info('authenticate', req.url, cert.subject.CN, cert.issuer);
-      next();
-   }
-}
-
-function dechunk(req, res, next) {
-   req.pipe(concat(function (content) {
-      req.body = content;
-      next();
-   }));
-}
-
-function monitor() {
-   logger.debug('monitor');
-   keySecretsStore.monitor();
-}
-
-function start(env) {
-   exports.secretTimeoutSeconds = 120;
-   if (env.SECRET_TIMEOUT_SECS) {
-      exports.secretTimeoutSeconds = parseInt(env.SECRET_TIMEOUT_SECS);
-   }
-   keySecretsStore.init({secretTimeoutSeconds: exports.secretTimeoutSeconds});
-   exports.monitorIntervalSeconds = 60;
-   if (env.MONITOR_INTERVAL_SECONDS) {
-      exports.monitorIntervalSeconds = parseInt(env.MONITOR_INTERVAL_SECONDS);
-   }
-   var options = {
-      ca: fs.readFileSync(env.CA_CERT),
-      key: fs.readFileSync(env.SERVER_KEY),
-      cert: fs.readFileSync(env.SERVER_CERT),
-      requestCert: true
-   };
-   app.use(appLogger);
-   app.use(authenticate);
-   app.use(authorise);
-   app.get('/help', handleGetHelp);
-   app.get('/genkey/:keyName/:count', handleGetGenKey);
-   app.get('/key/:keyName', handleGetKeyInfo);
-   app.get('/load/:keyName', handleGetLoadKey);
-   app.use(dechunk);
-   app.post('/secret/:keyName', handlePostSecret);
-   app.post('/encrypt/:keyName', handlePostEncrypt);
-   https.createServer(options, app).listen(env.APP_PORT);
-   logger.info('start', env.APP_PORT, env.ENV_TYPE);
-   setInterval(monitor, exports.monitorIntervalSeconds * 1000);
-}
-
-exports.envNames = [
-   'CA_CERT',
-   'SERVER_CERT',
-   'SERVER_KEY',
-   'ENV_TYPE',
-   'APP_PORT',
-   'SECRET_TIMEOUT_SECS'
-];
-
-function validateEnv(env) {
-   exports.envNames.forEach(function (envName) {
-      var value = process.env[envName];
-      if (!value) {
-         throw new Error("missing env: " + envName);
-      }
-      logger.info('env', envName, value);
-   });
-}
-
-validateEnv(process.env);
-start(process.env);

@@ -1,5 +1,7 @@
-/.idea
-/node_modules/
-/tmp
+.idea
+.vscode
+node_modules
+tmp
 *.log
-/certs
+certs
+npm-debug.log

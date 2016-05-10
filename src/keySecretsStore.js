@@ -1,20 +1,20 @@
 
 
-var bunyan = require('bunyan');
+const bunyan = require('bunyan');
 
-var logger = bunyan.createLogger({name: "cryptoserver.keySecretsStore"});
+const logger = bunyan.createLogger({name: "cryptoserver.keySecretsStore"});
 
-var keySecrets = {};
+const keySecrets = {};
 
 function createInstance() {
-   var that = {
+   const that = {
       monitor: function () {
          logger.debug('monitor', that.options.secretTimeoutSeconds);
          if (that.options.secretTimeoutSeconds) {
             Object.keys(keySecrets).forEach(function (keyName) {
-               var item = keySecrets[keyName];
+               const item = keySecrets[keyName];
                if (item) {
-                  var duration = new Date().getTime() - item.timestamp;
+                  const duration = new Date().getTime() - item.timestamp;
                   logger.debug('monitor duration', keySecrets.keyName, duration, item.timestamp);
                   if (duration > that.options.secretTimeoutSeconds * 1000) {
                      logger.info('monitor expire', keySecrets.keyName, duration);
@@ -40,7 +40,7 @@ function createInstance() {
       },
       setSecret: function (user, keyName, secret) {
          logger.info('setSecret', user, keyName);
-         var item = keySecrets[keyName];
+         const item = keySecrets[keyName];
          if (item) {
             item.secrets[user] = secret;
          }

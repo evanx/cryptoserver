@@ -2,12 +2,15 @@
 
 # enviroment
 
-export APP_PORT=8443
-export SERVER_KEY=tmp/certs/server.key
-export SERVER_CERT=tmp/certs/server.cert
-export CA_CERT=tmp/certs/ca.cert
-export ENV_TYPE=testing
-export SECRET_TIMEOUT_SECS=180
+c1start() {
+  cs_PORT=8443 \
+  cs_SERVER_KEY=tmp/certs/server.key \
+  cs_SERVER_CERT=tmp/certs/server.cert \
+  cs_CA_CERT=tmp/certs/ca.cert \
+  cs_SECRET_TIMEOUT_SECS=180 \
+  NODE_ENV=testing \
+  npm start | node_modules/.bin/bunyan -o keyspace
+}
 
 # util methods
 
@@ -109,7 +112,7 @@ c0default() {
   c0kill
   c0clear
   c0clientTask & 
-    node index.js | node_modules/.bin/bunyan -o short
+    c0start | node_modules/.bin/bunyan -o short
 }
 
 if [ $# -gt 0 ]

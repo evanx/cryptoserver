@@ -1,12 +1,12 @@
 
-var async = require('async');
-var bunyan = require('bunyan');
+const async = require('async');
+const bunyan = require('bunyan');
 
-var Common = require('./Common');
-var Crypto = require('./Crypto');
+const Common = require('./Common');
+const Crypto = require('./Crypto');
 
 module.exports = function (cryptoserver, keySecrets, done) {
-   var that = {};
+   const that = {};
    that.cryptoserver = cryptoserver;
    that.keyName = keySecrets.keyName;
    that.redisKey = 'dek:' + keySecrets.keyName;
@@ -15,7 +15,7 @@ module.exports = function (cryptoserver, keySecrets, done) {
    that.users.sort();
    that.fields = {};
 
-   var logger = bunyan.createLogger({name: 'cryptoserver.loadKey.' + that.keyName});
+   const logger = bunyan.createLogger({name: 'cryptoserver.loadKey.' + that.keyName});
 
    function decryptDuo(duo, secret, encryptedDek) {
       logger.debug('decryptDuo', duo, encryptedDek);
@@ -24,8 +24,8 @@ module.exports = function (cryptoserver, keySecrets, done) {
             logger.error('decryptDuo pbkdf2 error', err);
             done(err);
          } else {
-            var decipher = Crypto.createDecipheriv(kek, that.iv);
-            var decryptedDek = Crypto.decryptBuffer(decipher, new Buffer(encryptedDek, 'base64'));
+            const decipher = Crypto.createDecipheriv(kek, that.iv);
+            const decryptedDek = Crypto.decryptBuffer(decipher, new Buffer(encryptedDek, 'base64'));
             logger.info('decryptDuo', duo, kek.length, encryptedDek.length);
             done(null, decryptedDek);
          }
@@ -33,9 +33,9 @@ module.exports = function (cryptoserver, keySecrets, done) {
    }
 
    function findDuo(hashset) {
-      for (var field in hashset) {
+      for (let field in hashset) {
          if (field.indexOf('dek:') === 0) {
-            var duo = field.split(':').slice(1);
+            const duo = field.split(':').slice(1);
             if (that.secrets[duo[0]] && that.secrets[duo[1]]) {
                logger.info('dek', field, that.secrets[duo[0]].length, that.secrets[duo[1]].length);
                return duo;
@@ -52,8 +52,8 @@ module.exports = function (cryptoserver, keySecrets, done) {
       that.salt = new Buffer(hashset.salt, 'base64');
       that.iv = new Buffer(hashset.iv, 'base64');
       that.duo = findDuo(hashset);
-      var secret = that.secrets[that.duo[0]] + ':' + that.secrets[that.duo[1]];
-      var encryptedDek = hashset['dek:' + that.duo.join(':')];
+      const secret = that.secrets[that.duo[0]] + ':' + that.secrets[that.duo[1]];
+      const encryptedDek = hashset['dek:' + that.duo.join(':')];
       decryptDuo(that.duo, secret, encryptedDek);
    }
 

@@ -1,11 +1,12 @@
 
-var bunyan = require('bunyan');
-var now = require('performance-now');
+const bunyan = require('bunyan');
+const now = require('performance-now');
 
 var logger = bunyan.createLogger({name: "cryptoserver"});
 
-module.exports = {
-   createReplyLogger: function () {
+class Common {
+
+   createReplyLogger() {
       var message = Array.prototype.slice.call(arguments).join(' ');
       return function (err, reply) {
          if (err) {
@@ -14,16 +15,18 @@ module.exports = {
             logger.info(message, reply);
          }
       };
-   },
-   callbackTimer: function (name, callback) {
+   }
+
+   callbackTimer(name, callback) {
       var start = now();
       return function (err, result) {
          var duration = Math.round(now() - start);
          logger.info(name, duration);
          callback(err, result);
       };
-   },
-   countdownLatch: function (counter, done) {
+   }
+
+   countdownLatch(counter, done) {
       return function () {
          if (counter > 0) {
             counter--;
@@ -34,3 +37,5 @@ module.exports = {
       };
    }
 };
+
+module.exports = new Common();
