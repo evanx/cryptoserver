@@ -1,4 +1,4 @@
-spec: 'evanx/component#0.1.2'
+spec: 'component/exports#0.1.2'
 
 config:
    serviceName:
@@ -24,6 +24,7 @@ config:
       defaultValue: 120
    monitorIntervalSeconds:
       defaultValue: 60
+      optional: true
    caCert:
       type: 'file'
    serverCert:

@@ -30,7 +30,7 @@ exports.redisClient.on('error', function (err) {
    logger.error('error', err);
 });
 
-function start() {
+export async function start() {
    const env = process.env;
    validateEnv(env);
    exports.secretTimeoutSeconds = 120;
@@ -45,7 +45,7 @@ function start() {
    const options = {
       ca: fs.readFileSync(env.Server_caCert),
       key: fs.readFileSync(env.Server_serverKey),
-         cert: fs.readFileSync(env.Server_serverCert),
+      cert: fs.readFileSync(env.Server_serverCert),
       requestCert: true
    };
    app.use(appLogger);
@@ -58,9 +58,19 @@ function start() {
    app.use(dechunk);
    app.post('/secret/:keyName', handlePostSecret);
    app.post('/encrypt/:keyName', handlePostEncrypt);
-   https.createServer(options, app).listen(env.Server_port);
+   exports.server = https.createServer(options, app).listen(env.Server_port);
    logger.info('start', env.Server_port, env.NODE_ENV);
-   setInterval(monitor, exports.monitorIntervalSeconds * 1000);
+   exports.intervalId = setInterval(monitor, exports.monitorIntervalSeconds * 1000);
+   return exports;
+}
+
+export async function end() {
+   if (exports.server) {
+      server.close();
+   }
+   if (exports.intervalId) {
+      clearInterval(exports.intervalId);
+   }
 }
 
 function dechunk(req, res, next) {

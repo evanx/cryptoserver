@@ -1,5 +1,6 @@
 
 module.exports = {
+   spec: 'components',
    Server: {
       loggerLevel: 'debug',
       redisUrl: 'redis://localhost:6379/13',
@@ -7,11 +8,12 @@ module.exports = {
       hostname: 'cs',
       serviceName: 'cs',
       serviceLabel: 'cs',
-      port: 8888,
+      port: 8443,
       location: '/',
-      certLimit: 4,
-      secureDomain: false,
       adminLimit: 1,
-      addClientIp: false
+      key: './tmp/certs/server.key',
+      cert: './tmp/certs/server.cert',
+      caCert: './tmp/certs/ca.cert',
+      secretTimeoutSeconds : 180
    }
 };
