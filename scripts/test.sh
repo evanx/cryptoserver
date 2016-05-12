@@ -3,7 +3,7 @@
 # enviroment
 
 c1start() {
-  Server_PORT=8443 \
+  Server_port=8443 \
   Server_serverKey=tmp/certs/server.key \
   Server_serverCert=tmp/certs/server.cert \
   Server_caCert=tmp/certs/ca.cert \
@@ -109,10 +109,11 @@ c0kill() {
   fuser -k 8443/tcp
 }
 
+
 c0default() {
   c0kill
   c0clear
-  c0clientTask &
+  (true || c0clientTask) &
     c1start demo | node_modules/.bin/bunyan -o short
 }
 
