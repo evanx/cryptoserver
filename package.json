@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "scripts/test.sh"
+    "console": "node index.js | node_modules/.bin/bunyan -o short",
+    "build": "node_modules/.bin/babel lib cryptoserver -d build -s",
+    "watch": "node_modules/.bin/babel -w cryptoserver -d build -s",
+    "test": "scripts/test.sh",
+    "demo": "NODE_ENV=development configModule=./config/demo.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short"
   },
   "repository": {
     "type": "git",
@@ -36,5 +40,8 @@
     "request": "~2.53.0",
     "ssh2": "~0.4.3",
     "string": "~3.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.9.0"
   }
 }

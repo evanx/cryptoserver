@@ -1,0 +1,1 @@
+{"version":3,"sources":["../lib/CsonFiles.js"],"names":[],"mappings":";;;;;QAGgB,Y,GAAA,Y;;AAFhB,IAAM,OAAO,QAAQ,QAAR,CAAb;;AAEO,SAAS,YAAT,CAAsB,IAAtB,EAA4B;AAChC,UAAO,KAAK,YAAL,CAAkB,IAAlB,CAAP;AACF","file":"CsonFiles.js","sourcesContent":["\nconst CSON = require('season');\n\nexport function readFileSync(file) {\n   return CSON.readFileSync(file);\n}\n"]}

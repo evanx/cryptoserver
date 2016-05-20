@@ -8,9 +8,9 @@ c1start() {
   Server_serverCert=tmp/certs/server.cert \
   Server_caCert=tmp/certs/ca.cert \
   Server_secretTimeoutSeconds=180 \
-  configModule=./config/demo
+  configModule=./config/demo \
   NODE_ENV=testing \
-  npm start | node_modules/.bin/bunyan -o keyspace
+  npm run console
 }
 
 # util methods
@@ -113,8 +113,7 @@ c0kill() {
 c0default() {
   c0kill
   c0clear
-  (true || c0clientTask) &
-    c1start demo | node_modules/.bin/bunyan -o short
+  c0clientTask & c1start demo
 }
 
 if [ $# -gt 0 ]

@@ -1,5 +1,5 @@
 
 require('babel-polyfill');
-require('babel-core/register');
+//require('babel-core/register');
+require('./build/SupervisorStarter.js').startSupervisor();
 
-require('./lib/SupervisorStarter.js').startSupervisor();

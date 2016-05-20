@@ -1,0 +1,1 @@
+{"version":3,"sources":["../lib/SupervisorStarter.messages.js"],"names":[],"mappings":";;AACA,OAAO,OAAP,GAAiB;AACd,sBADc,iCACQ;AACnB,aAAO,+EAAP;AACF;AAHa,CAAjB","file":"SupervisorStarter.messages.js","sourcesContent":["\nmodule.exports = {\n   missingConfigModule() {\n      return 'Specify configModule e.g. configModule=./demo/config.js, or try: npm run demo';\n   }\n};\n"]}

@@ -10,6 +10,7 @@ const concat = require('concat-stream');
 const bunyan = require('bunyan');
 const marked = require('marked');
 const crypto = require('crypto');
+const redis = require('redis');
 
 const Crypto = require('./Crypto');
 const Common = require('./Common');
@@ -19,33 +20,25 @@ const keySecretsStore = require('./keySecretsStore');
 const keyStore = require('./keyStore');
 const encryptHandler = require('./encryptHandler');
 
-const redis = require('redis');
+const logger = Loggers.create(module.filename, 'debug');
+const redisClient = redis.createClient();
 
-global.cryptoserver = exports;
-
-exports.logger = logger;
-exports.redisClient = redis.createClient();
-
-exports.redisClient.on('error', function (err) {
+redisClient.on('error', function (err) {
    logger.error('error', err);
 });
 
-export async function start() {
-   const env = process.env;
-   validateEnv(env);
-   exports.secretTimeoutSeconds = 120;
-   if (env.Server_secretTimeoutSeconds) {
-      exports.secretTimeoutSeconds = parseInt(env.Server_secretTimeoutSeconds);
-   }
-   keySecretsStore.init({secretTimeoutSeconds: exports.secretTimeoutSeconds});
-   exports.monitorIntervalSeconds = 60;
-   if (env.Server_monitorIntervalSeconds) {
-      exports.monitorIntervalSeconds = parseInt(env.Server_monitorIntervalSeconds);
-   }
+Object.assign(exports, {logger});
+Object.assign(exports, {redisClient});
+global.cryptoserver = exports;
+
+export async function start({config}) {
+   logger.debug('state.config', config);
+   assert(config, 'config');
+   keySecretsStore.init({secretTimeoutSeconds: config.secretTimeoutSeconds});
    const options = {
-      ca: fs.readFileSync(env.Server_caCert),
-      key: fs.readFileSync(env.Server_serverKey),
-      cert: fs.readFileSync(env.Server_serverCert),
+      ca: fs.readFileSync(config.caCert),
+      key: fs.readFileSync(config.serverKey),
+      cert: fs.readFileSync(config.serverCert),
       requestCert: true
    };
    app.use(appLogger);
@@ -58,15 +51,15 @@ export async function start() {
    app.use(dechunk);
    app.post('/secret/:keyName', handlePostSecret);
    app.post('/encrypt/:keyName', handlePostEncrypt);
-   exports.server = https.createServer(options, app).listen(env.Server_port);
-   logger.info('start', env.Server_port, env.NODE_ENV);
-   exports.intervalId = setInterval(monitor, exports.monitorIntervalSeconds * 1000);
+   exports.server = https.createServer(options, app).listen(config.port);
+   logger.info('start', config.port, process.env.NODE_ENV);
+   exports.intervalId = setInterval(monitor, config.monitorIntervalSeconds * 1000);
    return exports;
 }
 
 export async function end() {
    if (exports.server) {
-      server.close();
+      exports.server.close();
    }
    if (exports.intervalId) {
       clearInterval(exports.intervalId);
@@ -138,7 +131,7 @@ function handleGetKeyInfo(req, res) {
       const keyName = req.params.keyName;
       const redisKey = 'dek:' + keyName;
       exports.redisClient.hkeys(redisKey, function (err, reply) {
-         const responseData = {
+         let responseData = {
             keyName: keyName,
             reqUrl: req.url
          };
